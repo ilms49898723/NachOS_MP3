@@ -189,7 +189,7 @@ AddrSpace::Execute(char* fileName)
     this->InitRegisters();		// set the initial register values
     this->RestoreState();		// load page table register
 
-    kernel->machine->Run();		// jump to the user progam
+    kernel->machine->Run();		// jump to the user program
 
     ASSERTNOTREACHED();			// machine->Run never returns;
 					// the address space exits

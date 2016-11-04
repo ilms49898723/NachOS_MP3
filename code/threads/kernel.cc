@@ -240,7 +240,7 @@ Kernel::NetworkTest() {
         postOfficeOut->Send(outPktHdr, outMailHdr, ack);
 
         // Wait for the ack from the other machine to the first message we sent
-	postOfficeIn->Receive(1, &inPktHdr, &inMailHdr, buffer);
+        postOfficeIn->Receive(1, &inPktHdr, &inMailHdr, buffer);
         cout << "Got: " << buffer << " : from " << inPktHdr.from << ", box "
                                                 << inMailHdr.from << "\n";
         cout.flush();

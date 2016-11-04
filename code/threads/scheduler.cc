@@ -145,7 +145,7 @@ Scheduler::Run (Thread *nextThread, bool finishing)
 
     if (oldThread->space != NULL) {	    // if there is an address space
         oldThread->RestoreUserState();     // to restore, do it.
-	oldThread->space->RestoreState();
+        oldThread->space->RestoreState();
     }
 }
 
