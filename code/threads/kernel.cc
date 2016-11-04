@@ -305,9 +305,26 @@ int Kernel::Exec(char* name)
 //  cout << "after ThreadedKernel:Run();" << endl;  // unreachable
 }
 
-void Kernel::PrintChar(char c)
+void Kernel::PrintInt(int number)
 {
-    synchConsoleOut->PutChar(c);
+    char num[40];
+    int idx = 0;
+    bool flag = false;
+    if (number < 0) {
+        flag = true;
+        number *= (-1);
+    }
+    num[idx++] = '\n';
+    do {
+        num[idx++] = (number % 10) + '0';
+        number /= 10;
+    } while (number > 0);
+    if (flag) {
+        num[idx++] = '-';
+    }
+    for (int i = idx - 1; i >= 0; --i) {
+        synchConsoleOut->PutChar(num[i]);
+    }
 }
 
 int Kernel::CreateFile(char *filename)

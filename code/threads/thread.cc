@@ -376,7 +376,7 @@ void
 Thread::SaveUserState()
 {
     for (int i = 0; i < NumTotalRegs; i++)
-	userRegisters[i] = kernel->machine->ReadRegister(i);
+        userRegisters[i] = kernel->machine->ReadRegister(i);
 }
 
 //----------------------------------------------------------------------
@@ -392,7 +392,7 @@ void
 Thread::RestoreUserState()
 {
     for (int i = 0; i < NumTotalRegs; i++)
-	kernel->machine->WriteRegister(i, userRegisters[i]);
+        kernel->machine->WriteRegister(i, userRegisters[i]);
 }
 
 

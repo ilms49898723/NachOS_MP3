@@ -242,24 +242,7 @@ Interrupt::Halt()
 void
 Interrupt::PrintInt(int number)
 {
-    char num[40];
-    int idx = 0;
-    bool flag = false;
-    if (number < 0) {
-        flag = true;
-        number *= (-1);
-    }
-    num[idx++] = '\n';
-    do {
-        num[idx++] = (number % 10) + '0';
-        number /= 10;
-    } while (number > 0);
-    if (flag) {
-        num[idx++] = '-';
-    }
-    for (int i = idx - 1; i >= 0; --i) {
-        kernel->PrintChar(num[i]);
-    }
+    kernel->PrintInt(number);
 }
 
 int
