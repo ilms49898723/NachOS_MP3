@@ -23,9 +23,9 @@ template <class T>
 SynchList<T>::SynchList()
 {
     list = new List<T>;
-    char listlockStringConstant[] = "list lock";
+    static char listlockStringConstant[] = "list lock";
     lock = new Lock(listlockStringConstant);
-    char listemptycondStringConstant[] = "list empty cond";
+    static char listemptycondStringConstant[] = "list empty cond";
     listEmpty = new Condition(listemptycondStringConstant);
 }
 
@@ -119,7 +119,7 @@ template <class T>
 void
 SynchList<T>::SelfTest(T val)
 {
-    char pingStringConstant[] = "ping";
+    static char pingStringConstant[] = "ping";
     Thread *helper = new Thread(pingStringConstant, 1);
 
     ASSERT(list->IsEmpty());

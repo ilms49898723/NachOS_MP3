@@ -94,7 +94,7 @@ Kernel::Initialize()
     // But if it ever tries to give up the CPU, we better have a Thread
     // object to save its state.
 
-    char mainThreadName[] = "main";
+    static char mainThreadName[] = "main";
     currentThread = new Thread(mainThreadName, threadNum++);
     currentThread->setStatus(RUNNING);
 
@@ -154,7 +154,7 @@ Kernel::ThreadSelfTest() {
    currentThread->SelfTest();	// test thread switching
 
    				// test semaphore operation
-   char testSemaphoreName[] = "test";
+   static char testSemaphoreName[] = "test";
    semaphore = new Semaphore(testSemaphoreName, 0);
    semaphore->SelfTest();
    delete semaphore;
@@ -211,8 +211,8 @@ Kernel::NetworkTest() {
         int farHost = (hostName == 0 ? 1 : 0);
         PacketHeader outPktHdr, inPktHdr;
         MailHeader outMailHdr, inMailHdr;
-        char data[] = "Hello there!";
-        char ack[] = "Got it!";
+        static char data[] = "Hello there!";
+        static char ack[] = "Got it!";
         char buffer[MaxMailSize];
 
         // construct packet, mail header for original message
