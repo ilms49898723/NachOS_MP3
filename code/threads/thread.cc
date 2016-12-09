@@ -40,6 +40,8 @@ Thread::Thread(char* threadName, int threadID) {
     stack = NULL;
     status = JUST_CREATED;
 
+    this->priority = 149;
+
     for (int i = 0; i < MachineStateSize; i++) {
         machineState[i] = NULL;     // not strictly necessary, since
         // new thread ignores contents
@@ -47,6 +49,26 @@ Thread::Thread(char* threadName, int threadID) {
     }
 
     space = NULL;
+}
+
+Thread::Thread(char* threadName, int threadID, int priority) {
+    ID = threadID;
+    name = threadName;
+    stackTop = NULL;
+    stack = NULL;
+    status = JUST_CREATED;
+
+    this->priority = priority;
+
+    for (int i = 0; i < MachineStateSize; i++) {
+        machineState[i] = NULL;     // not strictly necessary, since
+        // new thread ignores contents
+        // of machine registers
+    }
+
+    space = NULL;
+
+    // cout << "A new thread name " << name << " with priority " << this->priority << " created" << endl;
 }
 
 //----------------------------------------------------------------------

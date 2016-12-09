@@ -75,6 +75,7 @@ Scheduler::FindNextToRun () {
     if (readyList->IsEmpty()) {
         return NULL;
     } else {
+        // TODO: add new algorithm to choose next to run
         return readyList->RemoveFront();
     }
 }

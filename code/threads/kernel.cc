@@ -29,6 +29,7 @@ Kernel::Kernel(int argc, char** argv) {
     debugUserProg = FALSE;
     consoleIn = NULL;          // default is stdin
     consoleOut = NULL;         // default is stdout
+    priorityFlag = false;
 #ifndef FILESYS_STUB
     formatFlag = FALSE;
 #endif
@@ -48,6 +49,10 @@ Kernel::Kernel(int argc, char** argv) {
         } else if (strcmp(argv[i], "-e") == 0) {
             execfile[++execfileNum] = argv[++i];
             cout << execfile[execfileNum] << "\n";
+        } else if (strcmp(argv[i], "-ep") == 0) {   // add file and initial priority
+            priorityFlag = true;
+            execfile[++execfileNum] = argv[++i];
+            sscanf(argv[++i], "%d", priority + execfileNum);
         } else if (strcmp(argv[i], "-ci") == 0) {
             ASSERT(i + 1 < argc);
             consoleIn = argv[i + 1];
@@ -94,7 +99,7 @@ Kernel::Initialize() {
     // object to save its state.
 
     static char mainThreadName[] = "main";
-    currentThread = new Thread(mainThreadName, threadNum++);
+    currentThread = new Thread(mainThreadName, threadNum++, 149);
     currentThread->setStatus(RUNNING);
 
     stats = new Statistics();       // collect statistics
@@ -110,7 +115,7 @@ Kernel::Initialize() {
 #else
     fileSystem = new FileSystem(formatFlag);
 #endif // FILESYS_STUB
-    postOfficeIn = new PostOfficeInput(10);
+;   postOfficeIn = new PostOfficeInput(10);
     postOfficeOut = new PostOfficeOutput(reliability);
 
     interrupt->Enable();
@@ -262,7 +267,7 @@ void ForkExecute(Thread* t) {
 void Kernel::ExecAll() {
     for (int i = 1; i <= execfileNum; i++) {
         // int a = Exec(execfile[i]);
-        Exec(execfile[i]);
+        Exec(i, execfile[i]);
     }
 
     currentThread->Finish();
@@ -270,8 +275,12 @@ void Kernel::ExecAll() {
 }
 
 
-int Kernel::Exec(char* name) {
-    t[threadNum] = new Thread(name, threadNum);
+int Kernel::Exec(int idx, char* name) {
+    if (priorityFlag) {
+        t[threadNum] = new Thread(name, threadNum, priority[idx]);
+    } else {
+        t[threadNum] = new Thread(name, threadNum);
+    }
     t[threadNum]->space = new AddrSpace();
     t[threadNum]->Fork((VoidFunctionPtr) &ForkExecute, (void*)t[threadNum]);
     threadNum++;

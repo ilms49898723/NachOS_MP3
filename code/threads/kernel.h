@@ -36,8 +36,9 @@ public:
     void Initialize();      // initialize the kernel -- separated
     // from constructor because
     // refers to "kernel" as a global
+
     void ExecAll();
-    int Exec(char* name);
+    int Exec(int idx, char* name);
     void ThreadSelfTest();  // self test of threads and synchronization
 
     void ConsoleTest();         // interactive console self test
@@ -75,7 +76,8 @@ public:
 private:
 
     Thread* t[10];
-    char*   execfile[10];
+    char* execfile[10];
+    int priority[10];   // new for MP3, process initial priority
     int execfileNum;
     int threadNum;
     bool randomSlice;       // enable pseudo-random time slicing
@@ -83,6 +85,7 @@ private:
     double reliability;         // likelihood messages are dropped
     char* consoleIn;            // file to read console input from
     char* consoleOut;           // file to send console output to
+    bool priorityFlag;          // flag for MP3
 #ifndef FILESYS_STUB
     bool formatFlag;          // format the disk if this is true
 #endif

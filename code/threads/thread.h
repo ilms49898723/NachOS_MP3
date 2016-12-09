@@ -82,6 +82,7 @@ private:
 
 public:
     Thread(char* debugName, int threadID);      // initialize a Thread
+    Thread(char* debugName, int threadID, int priority);  // initialize a Thread with priority
     ~Thread();              // deallocate a Thread
     // NOTE -- thread being deleted
     // must not be running when delete
@@ -126,6 +127,7 @@ private:
     ThreadStatus status;    // ready, running or blocked
     char* name;
     int   ID;
+    int   priority;     // priority of the thread, initial value given in constructor
     void StackAllocate(VoidFunctionPtr func, void* arg);
     // Allocate a stack for thread.
     // Used internally by Fork()
