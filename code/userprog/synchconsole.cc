@@ -1,6 +1,6 @@
 // synchconsole.cc
-//	Routines providing synchronized access to the keyboard
-//	and console display hardware devices.
+//  Routines providing synchronized access to the keyboard
+//  and console display hardware devices.
 //
 // Copyright (c) 1992-1996 The Regents of the University of California.
 // All rights reserved.  See copyright.h for copyright notice and limitation
@@ -17,8 +17,7 @@
 //              otherwise, read from this file
 //----------------------------------------------------------------------
 
-SynchConsoleInput::SynchConsoleInput(char *inputFile)
-{
+SynchConsoleInput::SynchConsoleInput(char* inputFile) {
     static char consoleinStringConstant[] = "console in";
     consoleInput = new ConsoleInput(inputFile, this);
     lock = new Lock(consoleinStringConstant);
@@ -30,8 +29,7 @@ SynchConsoleInput::SynchConsoleInput(char *inputFile)
 //      Deallocate data structures for synchronized access to the keyboard
 //----------------------------------------------------------------------
 
-SynchConsoleInput::~SynchConsoleInput()
-{
+SynchConsoleInput::~SynchConsoleInput() {
     delete consoleInput;
     delete lock;
     delete waitFor;
@@ -43,12 +41,11 @@ SynchConsoleInput::~SynchConsoleInput()
 //----------------------------------------------------------------------
 
 char
-SynchConsoleInput::GetChar()
-{
+SynchConsoleInput::GetChar() {
     char ch;
 
     lock->Acquire();
-    waitFor->P();	// wait for EOF or a char to be available.
+    waitFor->P();   // wait for EOF or a char to be available.
     ch = consoleInput->GetChar();
     lock->Release();
     return ch;
@@ -57,12 +54,11 @@ SynchConsoleInput::GetChar()
 //----------------------------------------------------------------------
 // SynchConsoleInput::CallBack
 //      Interrupt handler called when keystroke is hit; wake up
-//	anyone waiting.
+//  anyone waiting.
 //----------------------------------------------------------------------
 
 void
-SynchConsoleInput::CallBack()
-{
+SynchConsoleInput::CallBack() {
     waitFor->V();
 }
 
@@ -74,8 +70,7 @@ SynchConsoleInput::CallBack()
 //              otherwise, read from this file
 //----------------------------------------------------------------------
 
-SynchConsoleOutput::SynchConsoleOutput(char *outputFile)
-{
+SynchConsoleOutput::SynchConsoleOutput(char* outputFile) {
     static char consoleoutStringConstant[] = "console out";
     consoleOutput = new ConsoleOutput(outputFile, this);
     lock = new Lock(consoleoutStringConstant);
@@ -87,8 +82,7 @@ SynchConsoleOutput::SynchConsoleOutput(char *outputFile)
 //      Deallocate data structures for synchronized access to the keyboard
 //----------------------------------------------------------------------
 
-SynchConsoleOutput::~SynchConsoleOutput()
-{
+SynchConsoleOutput::~SynchConsoleOutput() {
     delete consoleOutput;
     delete lock;
     delete waitFor;
@@ -100,8 +94,7 @@ SynchConsoleOutput::~SynchConsoleOutput()
 //----------------------------------------------------------------------
 
 void
-SynchConsoleOutput::PutChar(char ch)
-{
+SynchConsoleOutput::PutChar(char ch) {
     lock->Acquire();
     consoleOutput->PutChar(ch);
     waitFor->P();
@@ -111,11 +104,10 @@ SynchConsoleOutput::PutChar(char ch)
 //----------------------------------------------------------------------
 // SynchConsoleOutput::CallBack
 //      Interrupt handler called when it's safe to send the next
-//	character can be sent to the display.
+//  character can be sent to the display.
 //----------------------------------------------------------------------
 
 void
-SynchConsoleOutput::CallBack()
-{
+SynchConsoleOutput::CallBack() {
     waitFor->V();
 }

@@ -1,9 +1,9 @@
 /* errno.h
- *	Error codes for system calls.
+ *  Error codes for system calls.
  *
- *	Do not modify the contents of this file.
+ *  Do not modify the contents of this file.
  *
- *	Try to use the most descriptive error number for the error.
+ *  Try to use the most descriptive error number for the error.
  *      You may find it helpful to see what errors equivalent UNIX
  *      system calls return under various error conditions.
  *      For example the man page for the write system call "man 2 write"

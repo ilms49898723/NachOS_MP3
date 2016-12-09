@@ -1,15 +1,15 @@
 // addrspace.cc
-//	Routines to manage address spaces (executing user programs).
+//  Routines to manage address spaces (executing user programs).
 //
-//	In order to run a user program, you must:
+//  In order to run a user program, you must:
 //
-//	1. link with the -n -T 0 option
-//	2. run coff2noff to convert the object file to Nachos format
-//		(Nachos object code format is essentially just a simpler
-//		version of the UNIX executable object code format)
-//	3. load the NOFF file into the Nachos file system
-//		(if you are using the "stub" file system, you
-//		don't need to do this last step)
+//  1. link with the -n -T 0 option
+//  2. run coff2noff to convert the object file to Nachos format
+//      (Nachos object code format is essentially just a simpler
+//      version of the UNIX executable object code format)
+//  3. load the NOFF file into the Nachos file system
+//      (if you are using the "stub" file system, you
+//      don't need to do this last step)
 //
 // Copyright (c) 1992-1996 The Regents of the University of California.
 // All rights reserved.  See copyright.h for copyright notice and limitation
@@ -23,16 +23,15 @@
 
 //----------------------------------------------------------------------
 // SwapHeader
-// 	Do little endian to big endian conversion on the bytes in the
-//	object file header, in case the file was generated on a little
-//	endian machine, and we're now running on a big endian machine.
+//  Do little endian to big endian conversion on the bytes in the
+//  object file header, in case the file was generated on a little
+//  endian machine, and we're now running on a big endian machine.
 //----------------------------------------------------------------------
 
 bool AddrSpace::usedPhysicalPage[NumPhysPages] = {0};
 
 static void
-SwapHeader (NoffHeader *noffH)
-{
+SwapHeader (NoffHeader* noffH) {
     noffH->noffMagic = WordToHost(noffH->noffMagic);
     noffH->code.size = WordToHost(noffH->code.size);
     noffH->code.virtualAddr = WordToHost(noffH->code.virtualAddr);
@@ -51,22 +50,21 @@ SwapHeader (NoffHeader *noffH)
 
 #ifdef RDATA
     DEBUG(dbgAddr, "code = " << noffH->code.size <<
-                   " readonly = " << noffH->readonlyData.size <<
-                   " init = " << noffH->initData.size <<
-                   " uninit = " << noffH->uninitData.size << "\n");
+          " readonly = " << noffH->readonlyData.size <<
+          " init = " << noffH->initData.size <<
+          " uninit = " << noffH->uninitData.size << "\n");
 #endif
 }
 
 //----------------------------------------------------------------------
 // AddrSpace::AddrSpace
-// 	Create an address space to run a user program.
-//	Set up the translation from program memory to physical
-//	memory.  For now, this is really simple (1:1), since we are
-//	only uniprogramming, and we have a single unsegmented page table
+//  Create an address space to run a user program.
+//  Set up the translation from program memory to physical
+//  memory.  For now, this is really simple (1:1), since we are
+//  only uniprogramming, and we have a single unsegmented page table
 //----------------------------------------------------------------------
 
-AddrSpace::AddrSpace()
-{
+AddrSpace::AddrSpace() {
 
     // zero out the entire address space
     // bzero(kernel->machine->mainMemory, MemorySize);
@@ -74,32 +72,31 @@ AddrSpace::AddrSpace()
 
 //----------------------------------------------------------------------
 // AddrSpace::~AddrSpace
-// 	Dealloate an address space.
+//  Dealloate an address space.
 //----------------------------------------------------------------------
 
-AddrSpace::~AddrSpace()
-{
+AddrSpace::~AddrSpace() {
     for (int i = 0; i < NumPhysPages; ++i) {
         usedPhysicalPage[pageTable[i].physicalPage] = FALSE;
     }
+
     delete pageTable;
 }
 
 
 //----------------------------------------------------------------------
 // AddrSpace::Load
-// 	Load a user program into memory from a file.
+//  Load a user program into memory from a file.
 //
-//	Assumes that the page table has been initialized, and that
-//	the object code file is in NOFF format.
+//  Assumes that the page table has been initialized, and that
+//  the object code file is in NOFF format.
 //
-//	"fileName" is the file containing the object code to load into memory
+//  "fileName" is the file containing the object code to load into memory
 //----------------------------------------------------------------------
 
 bool
-AddrSpace::Load(char *fileName)
-{
-    OpenFile *executable = kernel->fileSystem->Open(fileName);
+AddrSpace::Load(char* fileName) {
+    OpenFile* executable = kernel->fileSystem->Open(fileName);
     NoffHeader noffH;
     unsigned int size;
 
@@ -108,33 +105,39 @@ AddrSpace::Load(char *fileName)
         return FALSE;
     }
 
-    executable->ReadAt((char *)&noffH, sizeof(noffH), 0);
+    executable->ReadAt((char*)&noffH, sizeof(noffH), 0);
+
     if ((noffH.noffMagic != NOFFMAGIC) &&
-		(WordToHost(noffH.noffMagic) == NOFFMAGIC))
-    	SwapHeader(&noffH);
+        (WordToHost(noffH.noffMagic) == NOFFMAGIC)) {
+        SwapHeader(&noffH);
+    }
+
     ASSERT(noffH.noffMagic == NOFFMAGIC);
 
 #ifdef RDATA
-// how big is address space?
+    // how big is address space?
     size = noffH.code.size + noffH.readonlyData.size + noffH.initData.size +
            noffH.uninitData.size + UserStackSize;
-                                                // we need to increase the size
-						// to leave room for the stack
+    // we need to increase the size
+    // to leave room for the stack
 #else
-// how big is address space?
+    // how big is address space?
     size = noffH.code.size + noffH.initData.size + noffH.uninitData.size
-			+ UserStackSize;	// we need to increase the size
-						// to leave room for the stack
+           + UserStackSize;    // we need to increase the size
+    // to leave room for the stack
 #endif
     numPages = divRoundUp(size, PageSize);
 
     pageTable = new TranslationEntry[numPages];
+
     for (int i = 0; i < (int)numPages; i++) {
-        pageTable[i].virtualPage = i;	// for now, virt page # = phys page #
+        pageTable[i].virtualPage = i;   // for now, virt page # = phys page #
         int j = 0;
+
         while (j < NumPhysPages && usedPhysicalPage[j]) {
             ++j;
         }
+
         usedPhysicalPage[j] = TRUE;
         pageTable[i].physicalPage = j;
         pageTable[i].valid = TRUE;
@@ -145,15 +148,15 @@ AddrSpace::Load(char *fileName)
 
     size = numPages * PageSize;
 
-    ASSERT(numPages <= static_cast<unsigned>(NumPhysPages));		// check we're not trying
-						// to run anything too big --
-						// at least until we have
-						// virtual memory
+    ASSERT(numPages <= static_cast<unsigned>(NumPhysPages));        // check we're not trying
+    // to run anything too big --
+    // at least until we have
+    // virtual memory
 
     DEBUG(dbgAddr, "Initializing address space: " << numPages << ", " << size);
 
-// then, copy in the code and data segments into memory
-// Note: this code assumes that virtual address = physical address
+    // then, copy in the code and data segments into memory
+    // Note: this code assumes that virtual address = physical address
     if (noffH.code.size > 0) {
         DEBUG(dbgAddr, "Initializing code segment.");
         DEBUG(dbgAddr, noffH.code.virtualAddr << ", " << noffH.code.size);
@@ -161,8 +164,9 @@ AddrSpace::Load(char *fileName)
                                 noffH.code.virtualAddr % PageSize;
         executable->ReadAt(
             &(kernel->machine->mainMemory[localPhysicalAddr]),
-                noffH.code.size, noffH.code.inFileAddr);
+            noffH.code.size, noffH.code.inFileAddr);
     }
+
     if (noffH.initData.size > 0) {
         DEBUG(dbgAddr, "Initializing data segment.");
         DEBUG(dbgAddr, noffH.initData.virtualAddr << ", " << noffH.initData.size);
@@ -170,26 +174,28 @@ AddrSpace::Load(char *fileName)
                                 noffH.initData.virtualAddr % PageSize;
         executable->ReadAt(
             &(kernel->machine->mainMemory[localPhysicalAddr]),
-                noffH.initData.size, noffH.initData.inFileAddr);
+            noffH.initData.size, noffH.initData.inFileAddr);
     }
 
 #ifdef RDATA
+
     if (noffH.readonlyData.size > 0) {
         DEBUG(dbgAddr, "Initializing read only data segment.");
         DEBUG(dbgAddr, noffH.readonlyData.virtualAddr << ", " << noffH.readonlyData.size);
         executable->ReadAt(
             &(kernel->machine->mainMemory[noffH.readonlyData.virtualAddr]),
-                noffH.readonlyData.size, noffH.readonlyData.inFileAddr);
+            noffH.readonlyData.size, noffH.readonlyData.inFileAddr);
     }
+
 #endif
 
-    delete executable;			// close file
-    return TRUE;			// success
+    delete executable;          // close file
+    return TRUE;            // success
 }
 
 //----------------------------------------------------------------------
 // AddrSpace::Execute
-// 	Run a user program using the current thread
+//  Run a user program using the current thread
 //
 //      The program is assumed to have already been loaded into
 //      the address space
@@ -197,40 +203,39 @@ AddrSpace::Load(char *fileName)
 //----------------------------------------------------------------------
 
 void
-AddrSpace::Execute(char* fileName)
-{
+AddrSpace::Execute(char* fileName) {
 
     kernel->currentThread->space = this;
 
-    this->InitRegisters();		// set the initial register values
-    this->RestoreState();		// load page table register
+    this->InitRegisters();      // set the initial register values
+    this->RestoreState();       // load page table register
 
-    kernel->machine->Run();		// jump to the user program
+    kernel->machine->Run();     // jump to the user program
 
-    ASSERTNOTREACHED();			// machine->Run never returns;
-					// the address space exits
-					// by doing the syscall "exit"
+    ASSERTNOTREACHED();         // machine->Run never returns;
+    // the address space exits
+    // by doing the syscall "exit"
 }
 
 
 //----------------------------------------------------------------------
 // AddrSpace::InitRegisters
-// 	Set the initial values for the user-level register set.
+//  Set the initial values for the user-level register set.
 //
-// 	We write these directly into the "machine" registers, so
-//	that we can immediately jump to user code.  Note that these
-//	will be saved/restored into the currentThread->userRegisters
-//	when this thread is context switched out.
+//  We write these directly into the "machine" registers, so
+//  that we can immediately jump to user code.  Note that these
+//  will be saved/restored into the currentThread->userRegisters
+//  when this thread is context switched out.
 //----------------------------------------------------------------------
 
 void
-AddrSpace::InitRegisters()
-{
-    Machine *machine = kernel->machine;
+AddrSpace::InitRegisters() {
+    Machine* machine = kernel->machine;
     int i;
 
-    for (i = 0; i < NumTotalRegs; i++)
-	machine->WriteRegister(i, 0);
+    for (i = 0; i < NumTotalRegs; i++) {
+        machine->WriteRegister(i, 0);
+    }
 
     // Initial program counter -- must be location of "Start", which
     //  is assumed to be virtual address zero
@@ -242,34 +247,33 @@ AddrSpace::InitRegisters()
     // after start will be at virtual address four.
     machine->WriteRegister(NextPCReg, 4);
 
-   // Set the stack register to the end of the address space, where we
-   // allocated the stack; but subtract off a bit, to make sure we don't
-   // accidentally reference off the end!
+    // Set the stack register to the end of the address space, where we
+    // allocated the stack; but subtract off a bit, to make sure we don't
+    // accidentally reference off the end!
     machine->WriteRegister(StackReg, numPages * PageSize - 16);
     DEBUG(dbgAddr, "Initializing stack pointer: " << numPages * PageSize - 16);
 }
 
 //----------------------------------------------------------------------
 // AddrSpace::SaveState
-// 	On a context switch, save any machine state, specific
-//	to this address space, that needs saving.
+//  On a context switch, save any machine state, specific
+//  to this address space, that needs saving.
 //
-//	For now, don't need to save anything!
+//  For now, don't need to save anything!
 //----------------------------------------------------------------------
 
-void AddrSpace::SaveState()
-{}
+void AddrSpace::SaveState() {
+}
 
 //----------------------------------------------------------------------
 // AddrSpace::RestoreState
-// 	On a context switch, restore the machine state so that
-//	this address space can run.
+//  On a context switch, restore the machine state so that
+//  this address space can run.
 //
 //      For now, tell the machine where to find the page table.
 //----------------------------------------------------------------------
 
-void AddrSpace::RestoreState()
-{
+void AddrSpace::RestoreState() {
     kernel->machine->pageTable = pageTable;
     kernel->machine->pageTableSize = numPages;
 }
@@ -284,20 +288,19 @@ void AddrSpace::RestoreState()
 //  Return any exceptions caused by the address translation.
 //----------------------------------------------------------------------
 ExceptionType
-AddrSpace::Translate(unsigned int vaddr, unsigned int *paddr, int isReadWrite)
-{
-    TranslationEntry *pte;
+AddrSpace::Translate(unsigned int vaddr, unsigned int* paddr, int isReadWrite) {
+    TranslationEntry* pte;
     int               pfn;
     unsigned int      vpn    = vaddr / PageSize;
     unsigned int      offset = vaddr % PageSize;
 
-    if(vpn >= numPages) {
+    if (vpn >= numPages) {
         return AddressErrorException;
     }
 
     pte = &pageTable[vpn];
 
-    if(isReadWrite && pte->readOnly) {
+    if (isReadWrite && pte->readOnly) {
         return ReadOnlyException;
     }
 
@@ -312,8 +315,9 @@ AddrSpace::Translate(unsigned int vaddr, unsigned int *paddr, int isReadWrite)
 
     pte->use = TRUE;          // set the use, dirty bits
 
-    if(isReadWrite)
+    if (isReadWrite) {
         pte->dirty = TRUE;
+    }
 
     *paddr = static_cast<unsigned>(pfn) * PageSize + offset;
 

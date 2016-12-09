@@ -1,9 +1,9 @@
 /* syscalls.h
- * 	Nachos system call interface.  These are Nachos kernel operations
- * 	that can be invoked from user programs, by trapping to the kernel
- *	via the "syscall" instruction.
+ *  Nachos system call interface.  These are Nachos kernel operations
+ *  that can be invoked from user programs, by trapping to the kernel
+ *  via the "syscall" instruction.
  *
- *	This file is included by user programs and by the Nachos kernel.
+ *  This file is included by user programs and by the Nachos kernel.
  *
  * Copyright (c) 1992-1993 The Regents of the University of California.
  * All rights reserved.  See copyright.h for copyright notice and limitation
@@ -18,24 +18,24 @@
 /* system call codes -- used by the stubs to tell the kernel which system call
  * is being asked for
  */
-#define SC_Halt		0
-#define SC_Exit		1
-#define SC_Exec		2
-#define SC_Join		3
-#define SC_Create	4
+#define SC_Halt     0
+#define SC_Exit     1
+#define SC_Exec     2
+#define SC_Join     3
+#define SC_Create   4
 #define SC_Remove       5
-#define SC_Open		6
-#define SC_Read		7
-#define SC_Write	8
+#define SC_Open     6
+#define SC_Read     7
+#define SC_Write    8
 #define SC_Seek         9
-#define SC_Close	10
-#define SC_ThreadFork	11
-#define SC_ThreadYield	12
-#define SC_ExecV	13
+#define SC_Close    10
+#define SC_ThreadFork   11
+#define SC_ThreadYield  12
+#define SC_ExecV    13
 #define SC_ThreadExit   14
 #define SC_ThreadJoin   15
-#define SC_Add		42
-#define SC_MSG		100
+#define SC_Add      42
+#define SC_MSG      100
 
 #define SC_PrintInt 20
 
@@ -65,7 +65,7 @@ int Add(int op1, int op2);
 /*
  * Just for simply showing message, not a safe way for console IO
  */
-void MSG(char *msg);
+void MSG(char* msg);
 
 /* Address space control operations: Exit, Exec, Execv, and Join */
 
@@ -113,27 +113,27 @@ typedef int OpenFileId;
  * the console device.
  */
 
-#define SysConsoleInput	0
-#define SysConsoleOutput	1
+#define SysConsoleInput 0
+#define SysConsoleOutput    1
 
 /* Create a Nachos file, with name "name" */
 /* Note: Create does not open the file.   */
 /* Return 1 on success, negative error code on failure */
-int Create(char *name);
+int Create(char* name);
 
 /* Remove a Nachos file, with name "name" */
-int Remove(char *name);
+int Remove(char* name);
 
 /* Open the Nachos file "name", and return an "OpenFileId" that can
  * be used to read and write to the file.
  */
-OpenFileId Open(char *name);
+OpenFileId Open(char* name);
 
 /* Write "size" bytes from "buffer" to the open file.
  * Return the number of bytes actually read on success.
  * On failure, a negative error code is returned.
  */
-int Write(char *buffer, int size, OpenFileId id);
+int Write(char* buffer, int size, OpenFileId id);
 
 /* Read "size" bytes from the open file into "buffer".
  * Return the number of bytes actually read -- if the open file isn't
@@ -141,7 +141,7 @@ int Write(char *buffer, int size, OpenFileId id);
  * characters to read, return whatever is available (for I/O devices,
  * you should always wait until you can return at least one character).
  */
-int Read(char *buffer, int size, OpenFileId id);
+int Read(char* buffer, int size, OpenFileId id);
 
 /* Set the seek position of the open file "id"
  * to the byte "position".

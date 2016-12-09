@@ -1,14 +1,14 @@
 // synch.h
-//	Data structures for synchronizing threads.
+//  Data structures for synchronizing threads.
 //
-//	Three kinds of synchronization are defined here: semaphores,
-//	locks, and condition variables.  The implementation for
-//	semaphores is given; for the latter two, only the procedure
-//	interface is given -- they are to be implemented as part of
-//	the first assignment.
+//  Three kinds of synchronization are defined here: semaphores,
+//  locks, and condition variables.  The implementation for
+//  semaphores is given; for the latter two, only the procedure
+//  interface is given -- they are to be implemented as part of
+//  the first assignment.
 //
-//	Note that all the synchronization objects take a "name" as
-//	part of the initialization.  This is solely for debugging purposes.
+//  Note that all the synchronization objects take a "name" as
+//  part of the initialization.  This is solely for debugging purposes.
 //
 // Copyright (c) 1992-1996 The Regents of the University of California.
 // All rights reserved.  See copyright.h for copyright notice and limitation
@@ -25,9 +25,9 @@
 // The following class defines a "semaphore" whose value is a non-negative
 // integer.  The semaphore has only two operations P() and V():
 //
-//	P() -- waits until value > 0, then decrement
+//  P() -- waits until value > 0, then decrement
 //
-//	V() -- increment, waking up a thread waiting in P() if necessary
+//  V() -- increment, waking up a thread waiting in P() if necessary
 //
 // Note that the interface does *not* allow a thread to read the value of
 // the semaphore directly -- even if you did read the value, the
@@ -38,67 +38,72 @@
 // now be different.
 
 class Semaphore {
-  public:
-    Semaphore(char* debugName, int initialValue);	// set initial value
-    ~Semaphore();   					// de-allocate semaphore
-    char* getName() { return name;}			// debugging assist
+public:
+    Semaphore(char* debugName, int initialValue);   // set initial value
+    ~Semaphore();                       // de-allocate semaphore
+    char* getName() {
+        return name;   // debugging assist
+    }
 
-    void P();	 	// these are the only operations on a semaphore
-    void V();	 	// they are both *atomic*
-    void SelfTest();	// test routine for semaphore implementation
+    void P();       // these are the only operations on a semaphore
+    void V();       // they are both *atomic*
+    void SelfTest();    // test routine for semaphore implementation
 
-  private:
+private:
     char* name;        // useful for debugging
     int value;         // semaphore value, always >= 0
-    List<Thread *> *queue;
-		  	// threads waiting in P() for the value to be > 0
-   };
+    List<Thread*>* queue;
+    // threads waiting in P() for the value to be > 0
+};
 
 // The following class defines a "lock".  A lock can be BUSY or FREE.
 // There are only two operations allowed on a lock:
 //
-//	Acquire -- wait until the lock is FREE, then set it to BUSY
+//  Acquire -- wait until the lock is FREE, then set it to BUSY
 //
-//	Release -- set lock to be FREE, waking up a thread waiting
-//		in Acquire if necessary
+//  Release -- set lock to be FREE, waking up a thread waiting
+//      in Acquire if necessary
 //
 // In addition, by convention, only the thread that acquired the lock
 // may release it.  As with semaphores, you can't read the lock value
 // (because the value might change immediately after you read it).
 
 class Lock {
-  public:
-    Lock(char* debugName);  	// initialize lock to be FREE
-    ~Lock();			// deallocate lock
-    char* getName() { return name; }	// debugging assist
+public:
+    Lock(char* debugName);      // initialize lock to be FREE
+    ~Lock();            // deallocate lock
+    char* getName() {
+        return name;    // debugging assist
+    }
 
-    void Acquire(); 		// these are the only operations on a lock
-    void Release(); 		// they are both *atomic*
+    void Acquire();         // these are the only operations on a lock
+    void Release();         // they are both *atomic*
 
     bool IsHeldByCurrentThread() {
-    		return lockHolder == kernel->currentThread; }
-    				// return true if the current thread
-				// holds this lock.
+        return lockHolder == kernel->currentThread;
+    }
+    // return true if the current thread
+    // holds this lock.
 
     // Note: SelfTest routine provided by SynchList
 
-  private:
-    char *name;			// debugging assist
-    Thread *lockHolder;		// thread currently holding lock
-    Semaphore *semaphore;	// we use a semaphore to implement lock
+private:
+    char* name;         // debugging assist
+    Thread* lockHolder;     // thread currently holding lock
+    Semaphore* semaphore;   // we use a semaphore to implement lock
 };
 
 // The following class defines a "condition variable".  A condition
 // variable does not have a value, but threads may be queued, waiting
 // on the variable.  These are only operations on a condition variable:
 //
-//	Wait() -- release the lock, relinquish the CPU until signaled,
-//		then re-acquire the lock
+//  Wait() -- release the lock, relinquish the CPU until signaled,
+//      then re-acquire the lock
 //
-//	Signal() -- wake up a thread, if there are any waiting on
-//		the condition
+//  Signal() -- wake up a thread, if there are any waiting on
+//      the condition
 //
-//	Broadcast() -- wake up all threads waiting on the condition
+//  Broadcast() -- wake up all threads waiting on the condition
 //
 // All operations on a condition variable must be made while
 // the current thread has acquired a lock.  Indeed, all accesses
@@ -122,23 +127,25 @@ class Lock {
 // is that it is a lot easier to implement than Hoare-style.
 
 class Condition {
-  public:
-    Condition(char* debugName);	// initialize condition to
-					// "no one waiting"
-    ~Condition();			// deallocate the condition
-    char* getName() { return (name); }
+public:
+    Condition(char* debugName); // initialize condition to
+    // "no one waiting"
+    ~Condition();           // deallocate the condition
+    char* getName() {
+        return (name);
+    }
 
-    void Wait(Lock *conditionLock); 	// these are the 3 operations on
-					// condition variables; releasing the
-					// lock and going to sleep are
-					// *atomic* in Wait()
-    void Signal(Lock *conditionLock);   // conditionLock must be held by
-    void Broadcast(Lock *conditionLock);// the currentThread for all of
-					// these operations
+    void Wait(Lock* conditionLock);     // these are the 3 operations on
+    // condition variables; releasing the
+    // lock and going to sleep are
+    // *atomic* in Wait()
+    void Signal(Lock* conditionLock);   // conditionLock must be held by
+    void Broadcast(Lock* conditionLock);// the currentThread for all of
+    // these operations
     // SelfTest routine provided by SyncLists
 
-  private:
+private:
     char* name;
-    List<Semaphore *> *waitQueue;	// list of waiting threads
+    List<Semaphore*>* waitQueue;    // list of waiting threads
 };
 #endif // SYNCH_H

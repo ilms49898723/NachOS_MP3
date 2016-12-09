@@ -1,12 +1,12 @@
 // stack.cc
-//	Routines to implement a LIFO stack of integers.
-//	
-//	The stack is represented as an array; we return an error
-//	if the caller tries to push more things onto the stack than we have
-//	room for.
+//  Routines to implement a LIFO stack of integers.
+//
+//  The stack is represented as an array; we return an error
+//  if the caller tries to push more things onto the stack than we have
+//  room for.
 //
 // Copyright (c) 1992,1993,1995 The Regents of the University of California.
-// All rights reserved.  See copyright.h for copyright notice and limitation 
+// All rights reserved.  See copyright.h for copyright notice and limitation
 // of liability and disclaimer of warranty provisions.
 
 
@@ -22,10 +22,10 @@ extern "C" {
 
 //----------------------------------------------------------------------
 // Stack::Stack
-// 	The constructor for the Stack class.  Note that it doesn't have a
-// 	return type.
+//  The constructor for the Stack class.  Note that it doesn't have a
+//  return type.
 //
-// 	"sz" -- maximum number of elements on the Stack at any time
+//  "sz" -- maximum number of elements on the Stack at any time
 //----------------------------------------------------------------------
 
 Stack::Stack(int sz) {
@@ -40,8 +40,8 @@ Stack::Stack(int sz) {
 
 //----------------------------------------------------------------------
 // Stack::~Stack
-// 	The destructor for the Stack class.  Just get rid of the array we
-// 	allocated in the constructor.
+//  The destructor for the Stack class.  Just get rid of the array we
+//  allocated in the constructor.
 //----------------------------------------------------------------------
 
 Stack::~Stack() {
@@ -51,35 +51,35 @@ Stack::~Stack() {
 
 //----------------------------------------------------------------------
 // Stack::Push
-// 	Put an integer on the top of the stack; error on overflow.
+//  Put an integer on the top of the stack; error on overflow.
 //
-//	"value" -- the value to put on the stack
+//  "value" -- the value to put on the stack
 //----------------------------------------------------------------------
 
 void
 Stack::Push(int value) {
     ASSERT(!Full());
-    
+
     stack[top++] = value;
 }
 
 //----------------------------------------------------------------------
 // Stack::Pop
-// 	Remove an integer from the top of the stack, returning its value.
-//	Error if the stack is empty.
+//  Remove an integer from the top of the stack, returning its value.
+//  Error if the stack is empty.
 //----------------------------------------------------------------------
 
 int
 Stack::Pop() {
 
     ASSERT(!Empty());
-    
+
     return (stack[--top]);
 }
 
 //----------------------------------------------------------------------
 // Stack::Full
-// 	Return TRUE if the stack has no more room.
+//  Return TRUE if the stack has no more room.
 //----------------------------------------------------------------------
 
 bool
@@ -89,7 +89,7 @@ Stack::Full() {
 
 //----------------------------------------------------------------------
 // Stack::Empty
-// 	Return TRUE if the stack has nothing on it.
+//  Return TRUE if the stack has nothing on it.
 //----------------------------------------------------------------------
 
 bool
@@ -99,37 +99,37 @@ Stack::Empty() {
 
 //----------------------------------------------------------------------
 // Stack::SelfTest
-// 	Test our stack implementation by pushing 10 numbers onto the 
-//	stack, and then print them as it pops them off.
+//  Test our stack implementation by pushing 10 numbers onto the
+//  stack, and then print them as it pops them off.
 //----------------------------------------------------------------------
 
 void
 Stack::SelfTest() {
     int count = 17;
-    
+
     // Put a bunch of stuff in the stack...
     while (!Full()) {
-	cout << "pushing " << count << "\n";
-	Push(count++);
+        cout << "pushing " << count << "\n";
+        Push(count++);
     }
-    
+
     // ... and take it out again.
     while (!Empty()) {
-	cout << "popping " << Pop() << "\n";
+        cout << "popping " << Pop() << "\n";
     }
 }
 
 //----------------------------------------------------------------------
 // main
-// 	Run the test code for the stack implementation.
+//  Run the test code for the stack implementation.
 //----------------------------------------------------------------------
 
 int
 main() {
-    Stack *stack = new Stack(10);   // Constructor with an argument.
+    Stack* stack = new Stack(10);   // Constructor with an argument.
 
     stack->SelfTest();
 
-    delete stack;		   // always delete what you allocate
+    delete stack;          // always delete what you allocate
     return 0;
 }

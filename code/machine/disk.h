@@ -1,12 +1,12 @@
 // disk.h
-//	Data structures to emulate a physical disk.  A physical disk
-//	can accept (one at a time) requests to read/write a disk sector;
-//	when the request is satisfied, the CPU gets an interrupt, and
-//	the next request can be sent to the disk.
+//  Data structures to emulate a physical disk.  A physical disk
+//  can accept (one at a time) requests to read/write a disk sector;
+//  when the request is satisfied, the CPU gets an interrupt, and
+//  the next request can be sent to the disk.
 //
-//	Disk contents are preserved across machine crashes, but if
-//	a file system operation (eg, create a file) is in progress when the
-//	system shuts down, the file system may be corrupted.
+//  Disk contents are preserved across machine crashes, but if
+//  a file system operation (eg, create a file) is in progress when the
+//  system shuts down, the file system may be corrupted.
 //
 //  DO NOT CHANGE -- part of the machine emulation
 //
@@ -47,44 +47,44 @@
 //
 // The track buffer simulation can be disabled by compiling with -DNOTRACKBUF
 
-const int SectorSize = 128;		// number of bytes per disk sector
-const int SectorsPerTrack  = 32;	// number of sectors per disk track
-const int NumTracks = 32;		// number of tracks per disk
-const int NumSectors = (SectorsPerTrack * NumTracks);
-					// total # of sectors per disk
+const int SectorSize = 128;     // number of bytes per disk sector
+const int SectorsPerTrack  = 32;    // number of sectors per disk track
+const int NumTracks = 32;       // number of tracks per disk
+const int NumSectors = (SectorsPerTrack* NumTracks);
+// total # of sectors per disk
 
 class Disk : public CallBackObj {
-  public:
-    Disk(CallBackObj *toCall);          // Create a simulated disk.
-					// Invoke toCall->CallBack()
-					// when each request completes.
-    ~Disk();				// Deallocate the disk.
+public:
+    Disk(CallBackObj* toCall);          // Create a simulated disk.
+    // Invoke toCall->CallBack()
+    // when each request completes.
+    ~Disk();                // Deallocate the disk.
 
     void ReadRequest(int sectorNumber, char* data);
-    					// Read/write an single disk sector.
-					// These routines send a request to
-    					// the disk and return immediately.
-    					// Only one request allowed at a time!
+    // Read/write an single disk sector.
+    // These routines send a request to
+    // the disk and return immediately.
+    // Only one request allowed at a time!
     void WriteRequest(int sectorNumber, char* data);
 
-    void CallBack();			// Invoked when disk request
-					// finishes. In turn calls, callWhenDone.
+    void CallBack();            // Invoked when disk request
+    // finishes. In turn calls, callWhenDone.
 
     int ComputeLatency(int newSector, bool writing);
-    					// Return how long a request to
-					// newSector will take:
-					// (seek + rotational delay + transfer)
+    // Return how long a request to
+    // newSector will take:
+    // (seek + rotational delay + transfer)
 
-  private:
-    int fileno;				// UNIX file number for simulated disk
-    char diskname[32];			// name of simulated disk's file
-    CallBackObj *callWhenDone;		// Invoke when any disk request finishes
-    bool active;     			// Is a disk operation in progress?
-    int lastSector;			// The previous disk request
-    int bufferInit;			// When the track buffer started
-					// being loaded
+private:
+    int fileno;             // UNIX file number for simulated disk
+    char diskname[32];          // name of simulated disk's file
+    CallBackObj* callWhenDone;      // Invoke when any disk request finishes
+    bool active;                // Is a disk operation in progress?
+    int lastSector;         // The previous disk request
+    int bufferInit;         // When the track buffer started
+    // being loaded
 
-    int TimeToSeek(int newSector, int *rotate); // time to get to the new track
+    int TimeToSeek(int newSector, int* rotate); // time to get to the new track
     int ModuloDiff(int to, int from);        // # sectors between to and from
     void UpdateLast(int newSector);
 };

@@ -1,6 +1,6 @@
 // pbitmap.h
-//	Data structures defining a "persistent" bitmap -- a bitmap
-//	that can be stored and fetched off of disk
+//  Data structures defining a "persistent" bitmap -- a bitmap
+//  that can be stored and fetched off of disk
 //
 //    A persistent bitmap can either be initialized from the disk
 //    when it is created, or it can be initialized later using
@@ -22,14 +22,14 @@
 // be read from and stored to the disk.
 
 class PersistentBitmap : public Bitmap {
-  public:
-    PersistentBitmap(OpenFile *file,int numItems); //initialize bitmap from disk
+public:
+    PersistentBitmap(OpenFile* file, int numItems); //initialize bitmap from disk
     PersistentBitmap(int numItems); // or don't...
 
-    ~PersistentBitmap(); 			// deallocate bitmap
+    ~PersistentBitmap();            // deallocate bitmap
 
-    void FetchFrom(OpenFile *file);     // read bitmap from the disk
-    void WriteBack(OpenFile *file); 	// write bitmap contents to disk
+    void FetchFrom(OpenFile* file);     // read bitmap from the disk
+    void WriteBack(OpenFile* file);     // write bitmap contents to disk
 };
 
 #endif // PBITMAP_H

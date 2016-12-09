@@ -1,16 +1,16 @@
 // list.cc
-//     	Routines to manage a singly linked list of "things".
-//	Lists are implemented as templates so that we can store
-//	anything on the list in a type-safe manner.
+//      Routines to manage a singly linked list of "things".
+//  Lists are implemented as templates so that we can store
+//  anything on the list in a type-safe manner.
 //
-// 	A "ListElement" is allocated for each item to be put on the
-//	list; it is de-allocated when the item is removed. This means
+//  A "ListElement" is allocated for each item to be put on the
+//  list; it is de-allocated when the item is removed. This means
 //      we don't need to keep a "next" pointer in every object we
 //      want to put on a list.
 //
-//     	NOTE: Mutual exclusion must be provided by the caller.
-//  	If you want a synchronized list, you must use the routines
-//	in synchlist.cc.
+//      NOTE: Mutual exclusion must be provided by the caller.
+//      If you want a synchronized list, you must use the routines
+//  in synchlist.cc.
 //
 // Copyright (c) 1992-1996 The Regents of the University of California.
 // All rights reserved.  See copyright.h for copyright notice and limitation
@@ -20,93 +20,92 @@
 
 //----------------------------------------------------------------------
 // ListElement<T>::ListElement
-// 	Initialize a list element, so it can be added somewhere on a list.
+//  Initialize a list element, so it can be added somewhere on a list.
 //
-//	"itm" is the thing to be put on the list.
+//  "itm" is the thing to be put on the list.
 //----------------------------------------------------------------------
 
 template <class T>
-ListElement<T>::ListElement(T itm)
-{
-     item = itm;
-     next = NULL;	// always initialize to something!
+ListElement<T>::ListElement(T itm) {
+    item = itm;
+    next = NULL;   // always initialize to something!
 }
 
 
 //----------------------------------------------------------------------
 // List<T>::List
-//	Initialize a list, empty to start with.
-//	Elements can now be added to the list.
+//  Initialize a list, empty to start with.
+//  Elements can now be added to the list.
 //----------------------------------------------------------------------
 
 template <class T>
-List<T>::List()
-{
+List<T>::List() {
     first = last = NULL;
     numInList = 0;
 }
 
 //----------------------------------------------------------------------
 // List<T>::~List
-//	Prepare a list for deallocation.
+//  Prepare a list for deallocation.
 //      This does *NOT* free list elements, nor does it
 //      free the data those elements point to.
 //      Normally, the list should be empty when this is called.
 //----------------------------------------------------------------------
 
 template <class T>
-List<T>::~List()
-{
+List<T>::~List() {
 }
 
 //----------------------------------------------------------------------
 // List<T>::Append
 //      Append an "item" to the end of the list.
 //
-//	Allocate a ListElement to keep track of the item.
+//  Allocate a ListElement to keep track of the item.
 //      If the list is empty, then this will be the only element.
-//	Otherwise, put it at the end.
+//  Otherwise, put it at the end.
 //
-//	"item" is the thing to put on the list.
+//  "item" is the thing to put on the list.
 //----------------------------------------------------------------------
 
 template <class T>
 void
-List<T>::Append(T item)
-{
-    ListElement<T> *element = new ListElement<T>(item);
+List<T>::Append(T item) {
+    ListElement<T>* element = new ListElement<T>(item);
 
     ASSERT(!IsInList(item));
-    if (IsEmpty()) {		// list is empty
-	first = element;
-	last = element;
-    } else {			// else put it after last
-	last->next = element;
-	last = element;
+
+    if (IsEmpty()) {        // list is empty
+        first = element;
+        last = element;
+    } else {            // else put it after last
+        last->next = element;
+        last = element;
     }
+
     numInList++;
     ASSERT(IsInList(item));
 }
 
 //----------------------------------------------------------------------
 // List<T>::Prepend
-//	Same as Append, only put "item" on the front.
+//  Same as Append, only put "item" on the front.
 //----------------------------------------------------------------------
 
 template <class T>
 void
-List<T>::Prepend(T item)
-{
-    ListElement<T> *element = new ListElement<T>(item);
+List<T>::Prepend(T item) {
+    ListElement<T>* element = new ListElement<T>(item);
 
     ASSERT(!IsInList(item));
-    if (IsEmpty()) {		// list is empty
-	first = element;
-	last = element;
-    } else {			// else put it before first
-	element->next = first;
-	first = element;
+
+    if (IsEmpty()) {        // list is empty
+        first = element;
+        last = element;
+    } else {            // else put it before first
+        element->next = first;
+        first = element;
     }
+
     numInList++;
     ASSERT(IsInList(item));
 }
@@ -114,28 +113,29 @@ List<T>::Prepend(T item)
 //----------------------------------------------------------------------
 // List<T>::RemoveFront
 //      Remove the first "item" from the front of the list.
-//	List must not be empty.
+//  List must not be empty.
 //
 // Returns:
-//	The removed item.
+//  The removed item.
 //----------------------------------------------------------------------
 
 template <class T>
 T
-List<T>::RemoveFront()
-{
-    ListElement<T> *element = first;
+List<T>::RemoveFront() {
+    ListElement<T>* element = first;
     T thing;
 
     ASSERT(!IsEmpty());
 
     thing = first->item;
-    if (first == last) {	// list had one item, now has none
+
+    if (first == last) {    // list had one item, now has none
         first = NULL;
-		last = NULL;
+        last = NULL;
     } else {
         first = element->next;
     }
+
     numInList--;
     delete element;
     return thing;
@@ -148,9 +148,8 @@ List<T>::RemoveFront()
 
 template <class T>
 void
-List<T>::Remove(T item)
-{
-    ListElement<T> *prev, *ptr;
+List<T>::Remove(T item) {
+    ListElement<T>* prev, *ptr;
     T removed;
 
     ASSERT(IsInList(item));
@@ -160,21 +159,26 @@ List<T>::Remove(T item)
         removed = RemoveFront();
         ASSERT(item == removed);
     } else {
-	prev = first;
+        prev = first;
+
         for (ptr = first->next; ptr != NULL; prev = ptr, ptr = ptr->next) {
             if (item == ptr->item) {
-		prev->next = ptr->next;
-		if (prev->next == NULL) {
-		    last = prev;
-		}
-		delete ptr;
-		numInList--;
-		break;
-	    }
+                prev->next = ptr->next;
+
+                if (prev->next == NULL) {
+                    last = prev;
+                }
+
+                delete ptr;
+                numInList--;
+                break;
+            }
         }
-	ASSERT(ptr != NULL);	// should always find item!
+
+        ASSERT(ptr != NULL);    // should always find item!
     }
-   ASSERT(!IsInList(item));
+
+    ASSERT(!IsInList(item));
 }
 
 //----------------------------------------------------------------------
@@ -184,15 +188,15 @@ List<T>::Remove(T item)
 
 template <class T>
 bool
-List<T>::IsInList(T item) const
-{
-    ListElement<T> *ptr;
+List<T>::IsInList(T item) const {
+    ListElement<T>* ptr;
 
     for (ptr = first; ptr != NULL; ptr = ptr->next) {
         if (item == ptr->item) {
             return TRUE;
         }
     }
+
     return FALSE;
 }
 
@@ -201,14 +205,13 @@ List<T>::IsInList(T item) const
 // List<T>::Apply
 //      Apply function to every item on a list.
 //
-//	"func" -- the function to apply
+//  "func" -- the function to apply
 //----------------------------------------------------------------------
 
 template <class T>
 void
-List<T>::Apply(void (*func)(T)) const
-{
-    ListElement<T> *ptr;
+List<T>::Apply(void (*func)(T)) const {
+    ListElement<T>* ptr;
 
     for (ptr = first; ptr != NULL; ptr = ptr->next) {
         (*func)(ptr->item);
@@ -219,42 +222,44 @@ List<T>::Apply(void (*func)(T)) const
 //----------------------------------------------------------------------
 // SortedList::Insert
 //      Insert an "item" into a list, so that the list elements are
-//	sorted in increasing order.
+//  sorted in increasing order.
 //
-//	Allocate a ListElement to keep track of the item.
+//  Allocate a ListElement to keep track of the item.
 //      If the list is empty, then this will be the only element.
-//	Otherwise, walk through the list, one element at a time,
-//	to find where the new item should be placed.
+//  Otherwise, walk through the list, one element at a time,
+//  to find where the new item should be placed.
 //
-//	"item" is the thing to put on the list.
+//  "item" is the thing to put on the list.
 //----------------------------------------------------------------------
 
 template <class T>
 void
-SortedList<T>::Insert(T item)
-{
-    ListElement<T> *element = new ListElement<T>(item);
-    ListElement<T> *ptr;		// keep track
+SortedList<T>::Insert(T item) {
+    ListElement<T>* element = new ListElement<T>(item);
+    ListElement<T>* ptr;        // keep track
 
     ASSERT(!IsInList(item));
-    if (this->IsEmpty()) {			// if list is empty, put at front
+
+    if (this->IsEmpty()) {          // if list is empty, put at front
         this->first = element;
         this->last = element;
     } else if (compare(item, this->first->item) < 0) {  // item goes at front
-	element->next = this->first;
-	this->first = element;
-    } else {		// look for first elt in list bigger than item
+        element->next = this->first;
+        this->first = element;
+    } else {        // look for first elt in list bigger than item
         for (ptr = this->first; ptr->next != NULL; ptr = ptr->next) {
             if (compare(item, ptr->next->item) < 0) {
-		element->next = ptr->next;
-	        ptr->next = element;
-		this->numInList++;
-		return;
-	    }
-	}
-	this->last->next = element;		// item goes at end of list
-	this->last = element;
+                element->next = ptr->next;
+                ptr->next = element;
+                this->numInList++;
+                return;
+            }
+        }
+
+        this->last->next = element;     // item goes at end of list
+        this->last = element;
     }
+
     this->numInList++;
     ASSERT(IsInList(item));
 }
@@ -263,26 +268,26 @@ SortedList<T>::Insert(T item)
 // List::SanityCheck
 //      Test whether this is still a legal list.
 //
-//	Tests: do I get to last starting from first?
-//	       does the list have the right # of elements?
+//  Tests: do I get to last starting from first?
+//         does the list have the right # of elements?
 //----------------------------------------------------------------------
 
 template <class T>
 void
-List<T>::SanityCheck() const
-{
-    ListElement<T> *ptr;
+List<T>::SanityCheck() const {
+    ListElement<T>* ptr;
     int numFound;
 
     if (first == NULL) {
-	ASSERT((numInList == 0) && (last == NULL));
+        ASSERT((numInList == 0) && (last == NULL));
     } else if (first == last) {
-	ASSERT((numInList == 1) && (last->next == NULL));
+        ASSERT((numInList == 1) && (last->next == NULL));
     } else {
         for (numFound = 1, ptr = first; ptr != last; ptr = ptr->next) {
-	    numFound++;
-            ASSERT(numFound <= numInList);	// prevent infinite loop
+            numFound++;
+            ASSERT(numFound <= numInList);  // prevent infinite loop
         }
+
         ASSERT(numFound == numInList);
         ASSERT(last->next == NULL);
     }
@@ -295,52 +300,54 @@ List<T>::SanityCheck() const
 
 template <class T>
 void
-List<T>::SelfTest(T *p, int numEntries)
-{
+List<T>::SelfTest(T* p, int numEntries) {
     int i;
-    ListIterator<T> *iterator = new ListIterator<T>(this);
+    ListIterator<T>* iterator = new ListIterator<T>(this);
 
     SanityCheck();
     // check various ways that list is empty
     ASSERT(IsEmpty() && (first == NULL));
+
     for (; !iterator->IsDone(); iterator->Next()) {
-	ASSERTNOTREACHED();	// nothing on list
+        ASSERTNOTREACHED(); // nothing on list
     }
 
     for (i = 0; i < numEntries; i++) {
-	 Append(p[i]);
-	 ASSERT(IsInList(p[i]));
-	 ASSERT(!IsEmpty());
-     }
-     SanityCheck();
+        Append(p[i]);
+        ASSERT(IsInList(p[i]));
+        ASSERT(!IsEmpty());
+    }
 
-     // should be able to get out everything we put in
-     for (i = 0; i < numEntries; i++) {
-	 Remove(p[i]);
-         ASSERT(!IsInList(p[i]));
-     }
-     ASSERT(IsEmpty());
-     SanityCheck();
-     delete iterator;
+    SanityCheck();
+
+    // should be able to get out everything we put in
+    for (i = 0; i < numEntries; i++) {
+        Remove(p[i]);
+        ASSERT(!IsInList(p[i]));
+    }
+
+    ASSERT(IsEmpty());
+    SanityCheck();
+    delete iterator;
 }
 
 //----------------------------------------------------------------------
 // SortedList::SanityCheck
 //      Test whether this is still a legal sorted list.
 //
-//	Test: is the list sorted?
+//  Test: is the list sorted?
 //----------------------------------------------------------------------
 
 template <class T>
 void
-SortedList<T>::SanityCheck() const
-{
-    ListElement<T> *prev, *ptr;
+SortedList<T>::SanityCheck() const {
+    ListElement<T>* prev, *ptr;
 
     List<T>::SanityCheck();
+
     if (this->first != this->last) {
         for (prev = this->first, ptr = this->first->next; ptr != NULL;
-						prev = ptr, ptr = ptr->next) {
+             prev = ptr, ptr = ptr->next) {
             ASSERT(compare(prev->item, ptr->item) <= 0);
         }
     }
@@ -353,31 +360,33 @@ SortedList<T>::SanityCheck() const
 
 template <class T>
 void
-SortedList<T>::SelfTest(T *p, int numEntries)
-{
+SortedList<T>::SelfTest(T* p, int numEntries) {
     int i;
-    T *q = new T[numEntries];
+    T* q = new T[numEntries];
 
     List<T>::SelfTest(p, numEntries);
 
     for (i = 0; i < numEntries; i++) {
-	 Insert(p[i]);
-	 ASSERT(IsInList(p[i]));
-     }
-     SanityCheck();
+        Insert(p[i]);
+        ASSERT(IsInList(p[i]));
+    }
 
-     // should be able to get out everything we put in
-     for (i = 0; i < numEntries; i++) {
-	 q[i] = this->RemoveFront();
-         ASSERT(!IsInList(q[i]));
-     }
-     ASSERT(this->IsEmpty());
+    SanityCheck();
 
-     // make sure everything came out in the right order
-     for (i = 0; i < (numEntries - 1); i++) {
-	 ASSERT(compare(q[i], q[i + 1]) <= 0);
-     }
-     SanityCheck();
+    // should be able to get out everything we put in
+    for (i = 0; i < numEntries; i++) {
+        q[i] = this->RemoveFront();
+        ASSERT(!IsInList(q[i]));
+    }
 
-     delete q;
+    ASSERT(this->IsEmpty());
+
+    // make sure everything came out in the right order
+    for (i = 0; i < (numEntries - 1); i++) {
+        ASSERT(compare(q[i], q[i + 1]) <= 0);
+    }
+
+    SanityCheck();
+
+    delete q;
 }

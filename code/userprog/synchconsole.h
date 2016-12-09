@@ -1,8 +1,8 @@
 // synchconsole.h
-//	Data structures for synchronized access to the keyboard
-//	and console display devices.
+//  Data structures for synchronized access to the keyboard
+//  and console display devices.
 //
-//	NOTE: this abstraction is not completely implemented.
+//  NOTE: this abstraction is not completely implemented.
 //
 // Copyright (c) 1992-1996 The Regents of the University of California.
 // All rights reserved.  See copyright.h for copyright notice and limitation
@@ -21,33 +21,33 @@
 // a console device
 
 class SynchConsoleInput : public CallBackObj {
-  public:
-    SynchConsoleInput(char *inputFile); // Initialize the console device
-    ~SynchConsoleInput();		// Deallocate console device
+public:
+    SynchConsoleInput(char* inputFile); // Initialize the console device
+    ~SynchConsoleInput();       // Deallocate console device
 
-    char GetChar();		// Read a character, waiting if necessary
+    char GetChar();     // Read a character, waiting if necessary
 
-  private:
-    ConsoleInput *consoleInput;	// the hardware keyboard
-    Lock *lock;			// only one reader at a time
-    Semaphore *waitFor;		// wait for callBack
+private:
+    ConsoleInput* consoleInput; // the hardware keyboard
+    Lock* lock;         // only one reader at a time
+    Semaphore* waitFor;     // wait for callBack
 
-    void CallBack();		// called when a keystroke is available
+    void CallBack();        // called when a keystroke is available
 };
 
 class SynchConsoleOutput : public CallBackObj {
-  public:
-    SynchConsoleOutput(char *outputFile); // Initialize the console device
+public:
+    SynchConsoleOutput(char* outputFile); // Initialize the console device
     ~SynchConsoleOutput();
 
-    void PutChar(char ch);	// Write a character, waiting if necessary
+    void PutChar(char ch);  // Write a character, waiting if necessary
 
-  private:
-    ConsoleOutput *consoleOutput;// the hardware display
-    Lock *lock;			// only one writer at a time
-    Semaphore *waitFor;		// wait for callBack
+private:
+    ConsoleOutput* consoleOutput;// the hardware display
+    Lock* lock;         // only one writer at a time
+    Semaphore* waitFor;     // wait for callBack
 
-    void CallBack();		// called when more data can be written
+    void CallBack();        // called when more data can be written
 };
 
 #endif // SYNCHCONSOLE_H

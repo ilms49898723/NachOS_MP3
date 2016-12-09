@@ -1,6 +1,6 @@
 // debug.cc
-//	Debugging routines.  Allows users to control whether to
-//	print DEBUG statements, based on a command line argument.
+//  Debugging routines.  Allows users to control whether to
+//  print DEBUG statements, based on a command line argument.
 //
 // Copyright (c) 1992-1996 The Regents of the University of California.
 // All rights reserved.  See copyright.h for copyright notice and limitation
@@ -14,16 +14,15 @@
 //----------------------------------------------------------------------
 // Debug::Debug
 //      Initialize so that only DEBUG messages with a flag in flagList
-//	will be printed.
+//  will be printed.
 //
-//	If the flag is "+", we enable all DEBUG messages.
+//  If the flag is "+", we enable all DEBUG messages.
 //
-// 	"flagList" is a string of characters for whose DEBUG messages are
-//		to be enabled.
+//  "flagList" is a string of characters for whose DEBUG messages are
+//      to be enabled.
 //----------------------------------------------------------------------
 
-Debug::Debug(char *flagList)
-{
+Debug::Debug(char* flagList) {
     enableFlags = flagList;
 }
 
@@ -34,12 +33,11 @@ Debug::Debug(char *flagList)
 //----------------------------------------------------------------------
 
 bool
-Debug::IsEnabled(char flag)
-{
+Debug::IsEnabled(char flag) {
     if (enableFlags != NULL) {
-	return ((strchr(enableFlags, flag) != 0)
-		|| (strchr(enableFlags, '+') != 0));
+        return ((strchr(enableFlags, flag) != 0)
+                || (strchr(enableFlags, '+') != 0));
     } else {
-    	return FALSE;
+        return FALSE;
     }
 }

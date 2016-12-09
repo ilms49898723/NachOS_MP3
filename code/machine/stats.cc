@@ -1,5 +1,5 @@
 // stats.h
-//	Routines for managing statistics about Nachos performance.
+//  Routines for managing statistics about Nachos performance.
 //
 // DO NOT CHANGE -- these stats are maintained by the machine emulation.
 //
@@ -13,11 +13,10 @@
 
 //----------------------------------------------------------------------
 // Statistics::Statistics
-// 	Initialize performance metrics to zero, at system startup.
+//  Initialize performance metrics to zero, at system startup.
 //----------------------------------------------------------------------
 
-Statistics::Statistics()
-{
+Statistics::Statistics() {
     totalTicks = idleTicks = systemTicks = userTicks = 0;
     numDiskReads = numDiskWrites = 0;
     numConsoleCharsRead = numConsoleCharsWritten = 0;
@@ -26,20 +25,19 @@ Statistics::Statistics()
 
 //----------------------------------------------------------------------
 // Statistics::Print
-// 	Print performance metrics, when we've finished everything
-//	at system shutdown.
+//  Print performance metrics, when we've finished everything
+//  at system shutdown.
 //----------------------------------------------------------------------
 
 void
-Statistics::Print()
-{
+Statistics::Print() {
     cout << "Ticks: total " << totalTicks << ", idle " << idleTicks;
-		cout << ", system " << systemTicks << ", user " << userTicks <<"\n";
+    cout << ", system " << systemTicks << ", user " << userTicks << "\n";
     cout << "Disk I/O: reads " << numDiskReads;
-		cout << ", writes " << numDiskWrites << "\n";
-		cout << "Console I/O: reads " << numConsoleCharsRead;
+    cout << ", writes " << numDiskWrites << "\n";
+    cout << "Console I/O: reads " << numConsoleCharsRead;
     cout << ", writes " << numConsoleCharsWritten << "\n";
     cout << "Paging: faults " << numPageFaults << "\n";
     cout << "Network I/O: packets received " << numPacketsRecvd;
-		cout << ", sent " << numPacketsSent << "\n";
+    cout << ", sent " << numPacketsSent << "\n";
 }
