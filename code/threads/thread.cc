@@ -41,6 +41,8 @@ Thread::Thread(char* threadName, int threadID) {
     status = JUST_CREATED;
 
     this->priority = 149;
+    this->tickWaited = 0;
+    this->executionTime = 0;
 
     for (int i = 0; i < MachineStateSize; i++) {
         machineState[i] = NULL;     // not strictly necessary, since
@@ -59,6 +61,8 @@ Thread::Thread(char* threadName, int threadID, int priority) {
     status = JUST_CREATED;
 
     this->priority = priority;
+    this->tickWaited = 0;
+    this->executionTime = 0;
 
     for (int i = 0; i < MachineStateSize; i++) {
         machineState[i] = NULL;     // not strictly necessary, since
@@ -151,6 +155,60 @@ Thread::CheckOverflow() {
         ASSERT(*stack == STACK_FENCEPOST);
 #endif
     }
+}
+
+
+// add tick count to tickWaited for aging
+void
+Thread::incTickWaited(int amount) {
+    this->tickWaited += amount;
+    if (this->tickWaited >= 1500) {
+        this->priority += (this->tickWaited / 1500) * 10;
+        if (this->priority >= 150) {
+            this->priority = 149;
+        }
+        this->tickWaited %= 1500;
+    }
+}
+
+// add execution time by amount
+void
+Thread::incTimeUsed(int amount) {
+    this->timeUsed += amount;
+}
+
+// calculate next execute time for SJF algorithm
+void
+Thread::calNewExecuteTime() {
+    this->executionTime = (this->timeUsed + this->executionTime) / 2;
+}
+
+int
+Thread::getPriority() const {
+    return this->priority;
+}
+
+int Thread::getExecutionTime() const {
+    return this->executionTime;
+}
+
+int Thread::getTimeUsed() const {
+    return this->timeUsed;
+}
+
+void
+Thread::setPriority(int priority) {
+    this->priority = priority;
+}
+
+void
+Thread::setExecutionTime(int time) {
+    this->executionTime = time;
+}
+
+void
+Thread::setTimeUsed(int time) {
+    this->timeUsed = time;
 }
 
 //----------------------------------------------------------------------

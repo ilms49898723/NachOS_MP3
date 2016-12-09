@@ -99,6 +99,21 @@ public:
     void Begin();       // Startup code for the thread
     void Finish();          // The thread is done executing
 
+
+    // function for MP3 scheduling
+    // functions for scheduling
+    void incTickWaited(int amount = 1);
+    void incExecutionTime(int amount = 1);
+    void incTimeUsed(int amount = 1);
+    void calNewExecuteTime();
+
+    int getPriority() const;
+    int getExecutionTime() const;
+    int getTimeUsed() const;
+    void setPriority(int priority);
+    void setExecutionTime(int time);
+    void setTimeUsed(int time);
+
     void CheckOverflow();       // Check if thread stack has overflowed
     void setStatus(ThreadStatus st) {
         status = st;
@@ -109,7 +124,6 @@ public:
     char* getName() {
         return (name);
     }
-
     int getID() {
         return (ID);
     }
@@ -127,7 +141,11 @@ private:
     ThreadStatus status;    // ready, running or blocked
     char* name;
     int   ID;
-    int   priority;     // priority of the thread, initial value given in constructor
+    int   priority;       // priority of the thread, initial value given in constructor
+    int   tickWaited;     // for aging implementation
+    int   executionTime;  // (evaluated) execution time, t(i) = 0.5 * T + 0.5 * t(i - 1)
+    int   timeUsed;       // (actual) execution time
+    int   lastTick;       // last tick
     void StackAllocate(VoidFunctionPtr func, void* arg);
     // Allocate a stack for thread.
     // Used internally by Fork()

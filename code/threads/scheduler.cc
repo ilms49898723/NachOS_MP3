@@ -30,7 +30,10 @@
 //----------------------------------------------------------------------
 
 Scheduler::Scheduler() {
-    readyList = new List<Thread*>;
+    // readyList = new List<Thread*>;
+    for (int i = 0; i < 4; ++i) {
+        L[i] = new List<Thread*>();
+    }
     toBeDestroyed = NULL;
 }
 
@@ -40,7 +43,10 @@ Scheduler::Scheduler() {
 //----------------------------------------------------------------------
 
 Scheduler::~Scheduler() {
-    delete readyList;
+    // delete readyList;
+    for (int i = 0; i < 4; ++i) {
+        delete L[i];
+    }
 }
 
 //----------------------------------------------------------------------
@@ -57,7 +63,14 @@ Scheduler::ReadyToRun (Thread* thread) {
     DEBUG(dbgThread, "Putting thread on ready list: " << thread->getName());
     //cout << "Putting thread on ready list: " << thread->getName() << endl ;
     thread->setStatus(READY);
-    readyList->Append(thread);
+    // readyList->Append(thread);
+    if (thread->getPriority() >= 100) {
+        L[1]->Append(thread);
+    } else if (thread->getPriority() >= 50) {
+        L[2]->Append(thread);
+    } else {
+        L[3]->Append(thread);
+    }
 }
 
 //----------------------------------------------------------------------
@@ -72,12 +85,12 @@ Thread*
 Scheduler::FindNextToRun () {
     ASSERT(kernel->interrupt->getLevel() == IntOff);
 
-    if (readyList->IsEmpty()) {
-        return NULL;
-    } else {
-        // TODO: add new algorithm to choose next to run
-        return readyList->RemoveFront();
-    }
+    return findNext();
+    // if (readyList->IsEmpty()) {
+    //     return NULL;
+    // } else {
+    //     return readyList->RemoveFront();
+    // }
 }
 
 //----------------------------------------------------------------------
@@ -168,6 +181,71 @@ Scheduler::CheckToBeDestroyed() {
 //----------------------------------------------------------------------
 void
 Scheduler::Print() {
+    // cout << "Ready list contents:\n";
+    // readyList->Apply(ThreadPrint);
     cout << "Ready list contents:\n";
-    readyList->Apply(ThreadPrint);
+    cout << "L1:\n";
+    L[1]->Apply(ThreadPrint);
+    cout << "L2:\n";
+    L[2]->Apply(ThreadPrint);
+    cout << "L3:\n";
+    L[3]->Apply(ThreadPrint);
+}
+
+
+void
+Scheduler::preprocessThreads() {
+    // add tick
+    // add wait tick
+    // calculate execution time
+    for (ListIterator<Thread*> it(L[1]); !it.IsDone(); it.Next()) {
+        if (it.Item() != kernel->currentThread) {
+            it.Item()->incTickWaited(kernel->currentThread->getTimeUsed());
+        }
+    }
+    kernel->currentThread->calNewExecuteTime();
+    kernel->currentThread->setTimeUsed(0);
+    // maintain L1, L2, L3
+}
+
+Thread*
+Scheduler::findNext() {
+    preprocessThreads();
+    Thread* result;
+    if ((result = findNextL1()) != NULL) {
+        L[1]->Remove(result);
+        return result;
+    } else if ((result = findNextL2()) != NULL) {
+        L[2]->Remove(result);
+        return result;
+    } else if ((result = findNextL3()) != NULL) {
+        L[3]->Remove(result);
+        return result;
+    } else {
+        return NULL;
+    }
+}
+
+Thread*
+Scheduler::findNextL1() {
+    int min_burst = 0x7fffffff;
+    Thread* result = NULL;
+    for (ListIterator<Thread*> it(L[1]); !it.IsDone(); it.Next()) {
+        // operation on it->Item()
+        if (it.Item()->getExecutionTime() < min_burst) {
+            min_burst = it.Item()->getExecutionTime();
+            result = it.Item();
+        }
+    }
+    return result;
+}
+
+Thread*
+Scheduler::findNextL2() {
+    return NULL;
+}
+
+Thread*
+Scheduler::findNextL3() {
+    return NULL;
 }

@@ -32,11 +32,20 @@ public:
     // running needs to be deleted
     void Print();       // Print contents of ready list
 
+    void preprocessThreads();
+    Thread* findNext();
+    Thread* findNextL1();
+    Thread* findNextL2();
+    Thread* findNextL3();
+
+
     // SelfTest for scheduler is implemented in class Thread
 
 private:
-    List<Thread*>* readyList;   // queue of threads that are ready to run,
+    // List<Thread*>* readyList;   // queue of threads that are ready to run,
     // but not running
+    List<Thread*>* L[4];    // multi-level feedback queue
+                            // L1, L2, L3 for 100~149, 50~99, 0~49
     Thread* toBeDestroyed;  // finishing thread to be destroyed
     // by the next thread that runs
 };

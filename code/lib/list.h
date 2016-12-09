@@ -123,10 +123,10 @@ private:
 
 // The following class can be used to step through a list.
 // Example code:
-//  ListIterator<T> *iter(list);
+//  ListIterator<T> iter(list);
 //
-//  for (; !iter->IsDone(); iter->Next()) {
-//      Operation on iter->Item()
+//  for (; !iter.IsDone(); iter.Next()) {
+//      Operation on iter.Item()
 //      }
 
 template <class T>
