@@ -1,5 +1,5 @@
-/* switch.s 
- *   	Machine dependent context switch routines.  DO NOT MODIFY THESE! 
+/* switch.s
+ *   	Machine dependent context switch routines.  DO NOT MODIFY THESE!
  *
  *	Context switching is inherently machine dependent, since
  *	the registers to be saved, how to set up an initial
@@ -23,7 +23,7 @@
  *	StartupPC  - Routine to call when the thread is started.
  *
  *	ThreadRoot is called from the SWITCH() routine to start
- *	a thread for the first time. 
+ *	a thread for the first time.
  *
  * SWITCH(oldThread, newThread)
  * 	oldThread  - The current thread that was running, where the
@@ -34,7 +34,7 @@
 
 /*
  Copyright (c) 1992-1996 The Regents of the University of California.
- All rights reserved.  See copyright.h for copyright notice and limitation 
+ All rights reserved.  See copyright.h for copyright notice and limitation
  of liability and disclaimer of warranty provisions.
  */
 
@@ -60,14 +60,14 @@
 #define fp      $30     /* frame pointer */
 #define ra      $31     /* return address */
 
-        .text   
+        .text
         .align  2
 
 	.globl ThreadRoot
 	.ent	ThreadRoot,0
 ThreadRoot:
 	or	fp,z,z		# Clearing the frame pointer here
-				# makes gdb backtraces of thread stacks 
+				# makes gdb backtraces of thread stacks
 				# end here (I hope!)
 
 	jal	StartupPC	# call startup procedure
@@ -94,7 +94,7 @@ SWITCH:
 	sw	s7, S7(a0)
 	sw	fp, FP(a0)		# save frame pointer
 	sw	ra, PC(a0)		# save return address
-	
+
 	lw	sp, SP(a1)		# load the new stack pointer
 	lw	s0, S0(a1)		# load the callee-save registers
 	lw	s1, S1(a1)
@@ -105,7 +105,7 @@ SWITCH:
 	lw	s6, S6(a1)
 	lw	s7, S7(a1)
 	lw	fp, FP(a1)
-	lw	ra, PC(a1)		# load the return address	
+	lw	ra, PC(a1)		# load the return address
 
 	j	ra
 	.end SWITCH
@@ -146,12 +146,12 @@ _ThreadRoot:
 #endif
 	nop  ; nop         /* These 2 nops are skipped because we are called
 			    * with a jmp+8 instruction. */
-	clr	%fp        /* Clearing the frame pointer makes gdb backtraces 
+	clr	%fp        /* Clearing the frame pointer makes gdb backtraces
 	                    * of thread stacks end here. */
 			   /* Currently the arguments are in out registers we
-			    * save them into local registers so they won't be 
+			    * save them into local registers so they won't be
 			    * trashed during the calls we make. */
-	mov	InitialPC, %l0  
+	mov	InitialPC, %l0
 	mov	InitialArg, %l1
 	mov	WhenDonePC, %l2
 			   /* Execute the code:
@@ -161,7 +161,7 @@ _ThreadRoot:
 			   */
 	call	StartupPC,0
 	nop
-	call	%l0, 1	
+	call	%l0, 1
 	mov	%l1, %o0   /* Using delay slot to setup argument to InitialPC */
 	call	%l2, 0
 	nop
@@ -298,7 +298,7 @@ SWITCH
         .align  2
 
         .globl  ThreadRoot
-        .globl  _ThreadRoot	
+        .globl  _ThreadRoot
 
 /* void ThreadRoot( void )
 **
@@ -308,7 +308,7 @@ SWITCH
 **      esi     points to thread function
 **      edi     point to Thread::Finish()
 */
-_ThreadRoot:	
+_ThreadRoot:
 ThreadRoot:
         pushl   %ebp
         movl    %esp,%ebp
@@ -339,7 +339,7 @@ ThreadRoot:
 
         .globl  SWITCH
 	.globl  _SWITCH
-_SWITCH:		
+_SWITCH:
 SWITCH:
         movl    %eax,_eax_save          # save the value of eax
         movl    4(%esp),%eax            # move pointer to t1 into eax
@@ -393,21 +393,21 @@ _SWITCH:
 	stfd	f14, 96(r3)	/* Store floating point registers 14 -31. */
 	stfd	f15,  104(r3)
 	stfd	f16,  112(r3)
-	stfd	f17,  120(r3) 
-	stfd	f18,  128(r3) 
-	stfd	f19,  136(r3) 
-	stfd	f20,  144(r3) 
-	stfd	f21,  152(r3) 
-	stfd	f22,  160(r3) 
-	stfd	f23,  168(r3) 
-	stfd	f24,  176(r3) 
-	stfd	f25,  184(r3) 
-	stfd	f26,  192(r3) 
-	stfd	f27,  200(r3) 
-	stfd	f28,  208(r3) 
-	stfd	f29,  216(r3) 
-	stfd	f30,  224(r3) 
-	stfd	f31,  232(r3) 
+	stfd	f17,  120(r3)
+	stfd	f18,  128(r3)
+	stfd	f19,  136(r3)
+	stfd	f20,  144(r3)
+	stfd	f21,  152(r3)
+	stfd	f22,  160(r3)
+	stfd	f23,  168(r3)
+	stfd	f24,  176(r3)
+	stfd	f25,  184(r3)
+	stfd	f26,  192(r3)
+	stfd	f27,  200(r3)
+	stfd	f28,  208(r3)
+	stfd	f29,  216(r3)
+	stfd	f30,  224(r3)
+	stfd	f31,  232(r3)
 
 	mflr	r0
 	stw	r0, 244(r3)	/* Spill the link register. */
@@ -429,20 +429,20 @@ _SWITCH:
 	lfd	f15,  104(r4)
 	lfd	f16,  112(r4)
 	lfd	f17,  120(r4)
-	lfd	f18,  128(r4) 
-	lfd	f19,  136(r4) 
-	lfd	f20,  144(r4) 
-	lfd	f21,  152(r4) 
-	lfd	f22,  160(r4) 
-	lfd	f23,  168(r4) 
-	lfd	f24,  176(r4) 
-	lfd	f25,  184(r4) 
-	lfd	f26,  192(r4) 
-	lfd	f27,  200(r4) 
-	lfd	f28,  208(r4) 
-	lfd	f29,  216(r4) 
-	lfd	f30,  224(r4) 
-	lfd	f31,  232(r4) 
+	lfd	f18,  128(r4)
+	lfd	f19,  136(r4)
+	lfd	f20,  144(r4)
+	lfd	f21,  152(r4)
+	lfd	f22,  160(r4)
+	lfd	f23,  168(r4)
+	lfd	f24,  176(r4)
+	lfd	f25,  184(r4)
+	lfd	f26,  192(r4)
+	lfd	f27,  200(r4)
+	lfd	f28,  208(r4)
+	lfd	f29,  216(r4)
+	lfd	f30,  224(r4)
+	lfd	f31,  232(r4)
 
 	/* When a thread first starts, the following blr instruction jumps
 	 * to ThreadRoot.  ThreadRoot expects the incoming thread block
@@ -506,14 +506,14 @@ _ThreadRoot:
  T.ThreadRoot:  .tc    .ThreadRoot[tc], ThreadRoot[ds]
                 .globl .ThreadRoot[PR]
                 .csect .ThreadRoot[PR]
- 
+
                 .set argarea,      32
                 .set linkarea,     24
                 .set locstckarea,   0
                 .set nfprs,        18
                 .set ngprs,        19
                 .set szdsa,        8*nfprs+4*ngprs+linkarea+argarea+locstckarea
-                
+
 
          mflr    0
          mfcr    12
@@ -525,12 +525,12 @@ _ThreadRoot:
          st     4,  24(1)
          st     5,  28(1)
          st     6,  32(1)
-         stu    1, -szdsa(1) 
+         stu    1, -szdsa(1)
 
          muli   11,3,1          #  copy contents of register r24 to r11
          bl     .branch[PR]      #  call function branch
          cror   0xf, 0xf, 0xf    #  no operation
-         
+
          ai     1,1,szdsa
          lm     13, -8*nfprs-4*ngprs(1)
          bl     ._restf14
@@ -542,7 +542,7 @@ _ThreadRoot:
          l      4, 24(1)
          l      5, 28(1)
          l      6, 32(1)
-  
+
          mflr    0
          mfcr    12
          bl      ._savef14
@@ -552,8 +552,8 @@ _ThreadRoot:
          st     12, 4(1)
          st     6,  24(1)
          stu    1, -szdsa(1)
- 
-         muli   3, 4,1          #  load user function parameter r22 to r3                     
+
+         muli   3, 4,1          #  load user function parameter r22 to r3
          muli   11,5,1          #  copy contents of register r21 to r11
          bl     .branch[PR]      #  call function branch
          cror   0xf, 0xf, 0xf    #  no operation
@@ -570,7 +570,7 @@ _ThreadRoot:
 
          muli   11,6,1          #  copy contents of register r23 to r11
          bl     .branch[PR]      #  call function branch
-         cror   0xf, 0xf, 0xf    #  no operation 
+         cror   0xf, 0xf, 0xf    #  no operation
          brl                     #  the programme should not return here.
 
          .extern ._savef14
@@ -578,7 +578,7 @@ _ThreadRoot:
 
 
 
-         
+
             .globl SWITCH[ds]
             .csect SWITCH[ds]
             .long  .SWITCH[PR]
@@ -591,58 +591,58 @@ _ThreadRoot:
 
          st     1,   0(3)       # store stack pointer
          stm    13,  20(3)      # store general purpose registers (13 -31)
-         stfd   14,  96(3)      # store floating point registers (14 -31) 
+         stfd   14,  96(3)      # store floating point registers (14 -31)
          stfd   15,  104(3)     # there is no single instruction to do for
          stfd   16,  112(3)     # floating point registers. so do one by one
-         stfd   17,  120(3) 
-         stfd   18,  128(3) 
-         stfd   19,  136(3) 
-         stfd   20,  144(3) 
-         stfd   21,  152(3) 
-         stfd   22,  160(3) 
-         stfd   23,  168(3) 
-         stfd   24,  176(3) 
-         stfd   25,  184(3) 
-         stfd   26,  192(3) 
-         stfd   27,  200(3) 
-         stfd   28,  208(3) 
-         stfd   29,  216(3) 
-         stfd   30,  224(3) 
-         stfd   31,  232(3) 
+         stfd   17,  120(3)
+         stfd   18,  128(3)
+         stfd   19,  136(3)
+         stfd   20,  144(3)
+         stfd   21,  152(3)
+         stfd   22,  160(3)
+         stfd   23,  168(3)
+         stfd   24,  176(3)
+         stfd   25,  184(3)
+         stfd   26,  192(3)
+         stfd   27,  200(3)
+         stfd   28,  208(3)
+         stfd   29,  216(3)
+         stfd   30,  224(3)
+         stfd   31,  232(3)
          mflr   0               # move link register value to register 0
          st     0,   244(3)     # store link register value
-       
+
          mfcr   12              # move condition register to register 12
          st     12,  240(3)     # store condition register value
 
 
          l      1,   0(4)       # load stack pointer
          l      0,   244(4)     # load link register value
-         mtlr   0         
+         mtlr   0
          l      12,  240(4)     # load condition register value
          mtcrf  0x38,  12
 
 
 
-         lm     13,  20(4)      # load into general purpose registers (13 -31) 
-         lfd    14,  96(4)      # load into floating point registers (14 -31) 
+         lm     13,  20(4)      # load into general purpose registers (13 -31)
+         lfd    14,  96(4)      # load into floating point registers (14 -31)
          lfd    15,  104(4)     # there is no single instruction for
-         lfd    16,  112(4)     # loading into more than one floating point 
+         lfd    16,  112(4)     # loading into more than one floating point
          lfd    17,  120(4)     # registers. so do one by one.
-         lfd    18,  128(4) 
-         lfd    19,  136(4) 
-         lfd    20,  144(4) 
-         lfd    21,  152(4) 
-         lfd    22,  160(4) 
-         lfd    23,  168(4) 
-         lfd    24,  176(4) 
-         lfd    25,  184(4) 
-         lfd    26,  192(4) 
-         lfd    27,  200(4) 
-         lfd    28,  208(4) 
-         lfd    29,  216(4) 
-         lfd    30,  224(4) 
-         lfd    31,  232(4) 
+         lfd    18,  128(4)
+         lfd    19,  136(4)
+         lfd    20,  144(4)
+         lfd    21,  152(4)
+         lfd    22,  160(4)
+         lfd    23,  168(4)
+         lfd    24,  176(4)
+         lfd    25,  184(4)
+         lfd    26,  192(4)
+         lfd    27,  200(4)
+         lfd    28,  208(4)
+         lfd    29,  216(4)
+         lfd    30,  224(4)
+         lfd    31,  232(4)
          l      3,   16(4)
          l      5,   4(4)
          l      6,   12(4)
@@ -654,7 +654,7 @@ _ThreadRoot:
 
 #ifdef ALPHA
 
-/* 
+/*
  * Porting to Alpha was done by Shuichi Oikawa (shui@sfc.keio.ac.jp).
  */
 
@@ -687,7 +687,7 @@ _ThreadRoot:
 	.set	noreorder	# unless overridden
 	.align	3
 	.text
- 	
+
 	.globl ThreadRoot
 	.ent	ThreadRoot,0
 ThreadRoot:
@@ -695,7 +695,7 @@ ThreadRoot:
 	ldgp	gp,0(pv)
 
 	mov	zero,s6		# Clearing the frame pointer here
-				# makes gdb backtraces of thread stacks 
+				# makes gdb backtraces of thread stacks
 				# end here (I hope!)
 	mov	StartupPC,pv
 	jsr	ra,(pv)		# call startup procedure
@@ -711,7 +711,7 @@ ThreadRoot:
 	ldgp	gp,0(ra)
 
 	.end ThreadRoot		# NEVER REACHED
-	
+
 /* a0 -- pointer to old Thread *
  * a1 -- pointer to new Thread */
 	.globl SWITCH
@@ -719,7 +719,7 @@ ThreadRoot:
 SWITCH:
 	.frame	sp,0,ra
 	ldgp	gp,0(pv)
-	
+
 	stq	ra, PC(a0)		# save return address
 	stq	gp, GP(a0)
 	stq	sp, SP(a0)		# save new stack pointer
@@ -730,8 +730,8 @@ SWITCH:
 	stq	s4, S4(a0)
 	stq	s5, S5(a0)
 	stq	s6, S6(a0)		# save frame pointer
-	
-	ldq	ra, PC(a1)		# load the return address	
+
+	ldq	ra, PC(a1)		# load the return address
 	ldq	gp, GP(a1)
 	ldq	sp, SP(a1)		# load the new stack pointer
 	ldq	s0, S0(a1)		# load the callee-save registers
@@ -746,5 +746,5 @@ SWITCH:
 	ret	zero,(ra)
 
 	.end SWITCH
-	
+
 #endif // ALPHA
