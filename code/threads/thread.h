@@ -105,11 +105,13 @@ public:
     void incTickWaited(int amount = 1);
     void incExecutionTime(int amount = 1);
     void incTimeUsed(int amount = 1);
+    void saveLastTick();
     void calNewExecuteTime();
 
     int getPriority() const;
     int getExecutionTime() const;
     int getTimeUsed() const;
+    int getLastTick() const;
     void setPriority(int priority);
     void setExecutionTime(int time);
     void setTimeUsed(int time);

@@ -163,6 +163,9 @@ void
 Thread::incTickWaited(int amount) {
     this->tickWaited += amount;
     if (this->tickWaited >= 1500) {
+        int delta = (this->tickWaited / 1500) * 10;
+        cout << "Tick " << kernel->stats->totalTicks << ": Thread " << ID <<
+          "changes its priority from " << this->priority << " to " << this->priority + delta << endl;
         this->priority += (this->tickWaited / 1500) * 10;
         if (this->priority >= 150) {
             this->priority = 149;
@@ -183,6 +186,11 @@ Thread::calNewExecuteTime() {
     this->executionTime = (this->timeUsed + this->executionTime) / 2;
 }
 
+void
+Thread::saveLastTick() {
+    this->lastTick = this->timeUsed;
+}
+
 int
 Thread::getPriority() const {
     return this->priority;
@@ -194,6 +202,10 @@ int Thread::getExecutionTime() const {
 
 int Thread::getTimeUsed() const {
     return this->timeUsed;
+}
+
+int Thread::getLastTick() const {
+    return this->lastTick;
 }
 
 void

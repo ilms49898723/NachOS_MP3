@@ -64,6 +64,8 @@ Scheduler::ReadyToRun (Thread* thread) {
     //cout << "Putting thread on ready list: " << thread->getName() << endl ;
     thread->setStatus(READY);
     // readyList->Append(thread);
+    cout << "Tick " << kernel->stats->totalTicks << ": Thread " << thread->getID()
+      << " is inserting into queue L" << 3 - thread->getPriority() / 50 << endl;
     if (thread->getPriority() >= 100) {
         L[1]->Append(thread);
     } else if (thread->getPriority() >= 50) {
@@ -113,6 +115,11 @@ Scheduler::FindNextToRun () {
 void
 Scheduler::Run (Thread* nextThread, bool finishing) {
     Thread* oldThread = kernel->currentThread;
+
+    cout << "Tick " << kernel->stats->totalTicks << ": Thread " << nextThread->getID() <<
+      " is now selected for execution" << endl;
+    cout << "Tick " << kernel->stats->totalTicks << ": Thread " << oldThread->getID() <<
+      " is replaced, and it has executed " << oldThread->getLastTick() << endl;
 
     ASSERT(kernel->interrupt->getLevel() == IntOff);
 
@@ -198,28 +205,64 @@ Scheduler::preprocessThreads() {
     // add tick
     // add wait tick
     // calculate execution time
-    for (ListIterator<Thread*> it(L[1]); !it.IsDone(); it.Next()) {
-        if (it.Item() != kernel->currentThread) {
-            it.Item()->incTickWaited(kernel->currentThread->getTimeUsed());
+    for (int i = 1; i <= 3; ++i) {
+        for (ListIterator<Thread*> it(L[i]); !it.IsDone(); it.Next()) {
+            if (it.Item() != kernel->currentThread) {
+                it.Item()->incTickWaited(kernel->currentThread->getTimeUsed());
+            }
         }
     }
     kernel->currentThread->calNewExecuteTime();
+    kernel->currentThread->saveLastTick();
     kernel->currentThread->setTimeUsed(0);
-    // maintain L1, L2, L3
+
+    // TODO: maintain L1, L2, L3
+    List <Thread*> * temp1;
+    List <Thread*> * temp2;
+    temp1 = new List <Thread*>();
+    temp2 = new List <Thread*>();
+
+    for (ListIterator<Thread*> it(L[3]); !it.IsDone(); it.Next()) {
+        if (it.Item()-> getPriority() >= 50) {
+            L[2]->Append(it.Item());
+            temp1->Append(it.Item());
+        }
+    }
+    for (ListIterator<Thread*> it(temp1); !it.IsDone(); it.Next()) {
+        L[3]->Remove(it.Item());
+    }
+    for (ListIterator<Thread*> it(L[2]); !it.IsDone(); it.Next()) {
+        if (it.Item()-> getPriority() >= 100) {
+            L[1]->Append(it.Item());
+            temp2->Append(it.Item());
+        }
+    }
+    for (ListIterator<Thread*> it(temp2); !it.IsDone(); it.Next()) {
+        L[2]->Remove(it.Item());
+    }
 }
 
 Thread*
 Scheduler::findNext() {
+    if (L[1]->IsEmpty() && L[2]->IsEmpty() && L[3]->IsEmpty()) {
+        return NULL;
+    }
     preprocessThreads();
     Thread* result;
     if ((result = findNextL1()) != NULL) {
         L[1]->Remove(result);
+        cout << "Tick " << kernel->stats->totalTicks << ": Thread " << result->getID()
+          << " is removed from queue L1" << endl;
         return result;
     } else if ((result = findNextL2()) != NULL) {
         L[2]->Remove(result);
+        cout << "Tick " << kernel->stats->totalTicks << ": Thread " << result->getID()
+          << " is removed from queue L2" << endl;
         return result;
     } else if ((result = findNextL3()) != NULL) {
         L[3]->Remove(result);
+        cout << "Tick " << kernel->stats->totalTicks << ": Thread " << result->getID()
+          << " is removed from queue L3" << endl;
         return result;
     } else {
         return NULL;
@@ -242,10 +285,23 @@ Scheduler::findNextL1() {
 
 Thread*
 Scheduler::findNextL2() {
-    return NULL;
+    int max_priority = -1;
+    Thread* result = NULL;
+    for (ListIterator<Thread*> it(L[2]); !it.IsDone(); it.Next()) {
+        // operation on it->Item()
+        if (it.Item()->getPriority() > max_priority) {
+            max_priority = it.Item()->getPriority();
+            result = it.Item();
+        }
+    }
+    return result;
 }
 
 Thread*
 Scheduler::findNextL3() {
-    return NULL;
+    if (L[3]->IsEmpty()) {
+        return NULL;
+    } else {
+        return L[3]->Front();
+    }
 }

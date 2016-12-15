@@ -162,7 +162,11 @@ Interrupt::OneTick() {
 
     DEBUG(dbgInt, "== Tick " << stats->totalTicks << " ==");
 
-    kernel->currentThread->incTimeUsed();
+    if (status == SystemMode) {
+        kernel->currentThread->incTimeUsed(SystemTick);
+    } else {
+        kernel->currentThread->incTimeUsed(UserTick);
+    }
 
     // check any pending interrupts are now ready to fire
     ChangeLevel(IntOn, IntOff); // first, turn off interrupts
