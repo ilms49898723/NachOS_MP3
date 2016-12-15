@@ -163,13 +163,13 @@ void
 Thread::incTickWaited(int amount) {
     this->tickWaited += amount;
     if (this->tickWaited >= 1500) {
-        int delta = (this->tickWaited / 1500) * 10;
-        cout << "Tick " << kernel->stats->totalTicks << ": Thread " << ID <<
-          "changes its priority from " << this->priority << " to " << this->priority + delta << endl;
+        int oldPriority = this->priority;
         this->priority += (this->tickWaited / 1500) * 10;
         if (this->priority >= 150) {
             this->priority = 149;
         }
+        cout << "Tick " << kernel->stats->totalTicks << ": Thread " << ID <<
+          " changes its priority from " << oldPriority << " to " << this->priority << endl;
         this->tickWaited %= 1500;
     }
 }

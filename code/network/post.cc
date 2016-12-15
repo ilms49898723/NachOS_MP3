@@ -156,7 +156,8 @@ PostOfficeInput::PostOfficeInput(int nBoxes) {
     network = new NetworkInput(this);
 
     static char postalworkerStringConstant[] = "postal worker";
-    Thread* t = new Thread(postalworkerStringConstant, 1);
+    // Thread* t = new Thread(postalworkerStringConstant, 1);
+    Thread* t = new Thread(postalworkerStringConstant, -1, 149);
 
     t->Fork(PostOfficeInput::PostalDelivery, this);
 }

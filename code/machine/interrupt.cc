@@ -175,7 +175,9 @@ Interrupt::OneTick() {
     CheckIfDue(FALSE);      // check for pending interrupts
     ChangeLevel(IntOff, IntOn); // re-enable interrupts
 
-    if (yieldOnReturn) {
+    if (yieldOnReturn && kernel->currentThread->getPriority() >= 100) {
+        yieldOnReturn = FALSE;
+    } else if (yieldOnReturn) {
         // if the timer device handler asked
         // for a context switch, ok to do it now
         yieldOnReturn = FALSE;
