@@ -29,7 +29,8 @@ Kernel::Kernel(int argc, char** argv) {
     debugUserProg = FALSE;
     consoleIn = NULL;          // default is stdin
     consoleOut = NULL;         // default is stdout
-    priorityFlag = false;
+    priorityFlag = FALSE;
+    dumpLogToFile = FALSE;
 #ifndef FILESYS_STUB
     formatFlag = FALSE;
 #endif
@@ -81,6 +82,9 @@ Kernel::Kernel(int argc, char** argv) {
             cout << "Partial usage: nachos [-nf]\n";
 #endif
             cout << "Partial usage: nachos [-n #] [-m #]\n";
+        } else if (strcmp(argv[i], "-mp3") == 0) {
+            dumpLogToFile = TRUE;
+            dumpfile.open("mp3.log", ios::out);
         }
     }
 }
@@ -115,7 +119,8 @@ Kernel::Initialize() {
 #else
     fileSystem = new FileSystem(formatFlag);
 #endif // FILESYS_STUB
-;   postOfficeIn = new PostOfficeInput(10);
+    ;
+    postOfficeIn = new PostOfficeInput(10);
     postOfficeOut = new PostOfficeOutput(reliability);
 
     interrupt->Enable();
@@ -281,6 +286,7 @@ int Kernel::Exec(int idx, char* name) {
     } else {
         t[threadNum] = new Thread(name, threadNum);
     }
+
     t[threadNum]->space = new AddrSpace();
     t[threadNum]->Fork((VoidFunctionPtr) &ForkExecute, (void*)t[threadNum]);
     threadNum++;

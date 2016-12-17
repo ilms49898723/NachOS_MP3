@@ -34,6 +34,7 @@ Scheduler::Scheduler() {
     for (int i = 0; i < 4; ++i) {
         L[i] = new List<Thread*>();
     }
+
     toBeDestroyed = NULL;
     dirty = FALSE;
 }
@@ -65,8 +66,15 @@ Scheduler::ReadyToRun (Thread* thread) {
     //cout << "Putting thread on ready list: " << thread->getName() << endl ;
     thread->setStatus(READY);
     // readyList->Append(thread);
-    cout << "Tick " << kernel->stats->totalTicks << ": Thread " << thread->getID()
-      << " is inserting into queue L" << 3 - thread->getPriority() / 50 << endl;
+
+    if (kernel->dumpLogToFile) {
+        kernel->dumpfile << "Tick " << kernel->stats->totalTicks << ": Thread " << thread->getID()
+                         << " is inserting into queue L" << 3 - thread->getPriority() / 50 << endl;
+    } else {
+        cout << "Tick " << kernel->stats->totalTicks << ": Thread " << thread->getID()
+             << " is inserting into queue L" << 3 - thread->getPriority() / 50 << endl;
+    }
+
     if (thread->getPriority() >= 100) {
         L[1]->Append(thread);
     } else if (thread->getPriority() >= 50) {
@@ -117,10 +125,17 @@ void
 Scheduler::Run (Thread* nextThread, bool finishing) {
     Thread* oldThread = kernel->currentThread;
 
-    cout << "Tick " << kernel->stats->totalTicks << ": Thread " << nextThread->getID() <<
-      " is now selected for execution" << endl;
-    cout << "Tick " << kernel->stats->totalTicks << ": Thread " << oldThread->getID() <<
-      " is replaced, and it has executed " << oldThread->getLastTick() << endl;
+    if (kernel->dumpLogToFile) {
+        kernel->dumpfile << "Tick " << kernel->stats->totalTicks << ": Thread " << nextThread->getID() <<
+                         " is now selected for execution" << endl;
+        kernel->dumpfile << "Tick " << kernel->stats->totalTicks << ": Thread " << oldThread->getID() <<
+                         " is replaced, and it has executed " << oldThread->getLastTick() << endl;
+    } else {
+        cout << "Tick " << kernel->stats->totalTicks << ": Thread " << nextThread->getID() <<
+             " is now selected for execution" << endl;
+        cout << "Tick " << kernel->stats->totalTicks << ": Thread " << oldThread->getID() <<
+             " is replaced, and it has executed " << oldThread->getLastTick() << endl;
+    }
 
     ASSERT(kernel->interrupt->getLevel() == IntOff);
 
@@ -202,8 +217,8 @@ Scheduler::Print() {
 
 int
 Scheduler::maintainQueues() {
-    List <Thread*> * temp1;
-    List <Thread*> * temp2;
+    List <Thread*>* temp1;
+    List <Thread*>* temp2;
     temp1 = new List <Thread*>();
     temp2 = new List <Thread*>();
 
@@ -217,9 +232,11 @@ Scheduler::maintainQueues() {
             L2_new = TRUE;
         }
     }
+
     for (ListIterator<Thread*> it(temp1); !it.IsDone(); it.Next()) {
         L[3]->Remove(it.Item());
     }
+
     for (ListIterator<Thread*> it(L[2]); !it.IsDone(); it.Next()) {
         if (it.Item()-> getPriority() >= 100) {
             L[1]->Append(it.Item());
@@ -227,9 +244,11 @@ Scheduler::maintainQueues() {
             L1_new = TRUE;
         }
     }
+
     for (ListIterator<Thread*> it(temp2); !it.IsDone(); it.Next()) {
         L[2]->Remove(it.Item());
     }
+
     if (L1_new) {
         return 1;
     } else if (L2_new) {
@@ -269,22 +288,45 @@ Scheduler::findNext() {
     if (L[1]->IsEmpty() && L[2]->IsEmpty() && L[3]->IsEmpty()) {
         return NULL;
     }
+
     preprocessThreads();
     Thread* result;
+
     if ((result = findNextL1()) != NULL) {
         L[1]->Remove(result);
-        cout << "Tick " << kernel->stats->totalTicks << ": Thread " << result->getID()
-          << " is removed from queue L1" << endl;
+
+        if (kernel->dumpLogToFile) {
+            kernel->dumpfile << "Tick " << kernel->stats->totalTicks << ": Thread " << result->getID()
+                             << " is removed from queue L1" << endl;
+        } else {
+            cout << "Tick " << kernel->stats->totalTicks << ": Thread " << result->getID()
+                 << " is removed from queue L1" << endl;
+        }
+
         return result;
     } else if ((result = findNextL2()) != NULL) {
         L[2]->Remove(result);
-        cout << "Tick " << kernel->stats->totalTicks << ": Thread " << result->getID()
-          << " is removed from queue L2" << endl;
+
+        if (kernel->dumpLogToFile) {
+            kernel->dumpfile << "Tick " << kernel->stats->totalTicks << ": Thread " << result->getID()
+                             << " is removed from queue L2" << endl;
+        } else {
+            cout << "Tick " << kernel->stats->totalTicks << ": Thread " << result->getID()
+                 << " is removed from queue L2" << endl;
+        }
+
         return result;
     } else if ((result = findNextL3()) != NULL) {
         L[3]->Remove(result);
-        cout << "Tick " << kernel->stats->totalTicks << ": Thread " << result->getID()
-          << " is removed from queue L3" << endl;
+
+        if (kernel->dumpLogToFile) {
+            kernel->dumpfile << "Tick " << kernel->stats->totalTicks << ": Thread " << result->getID()
+                             << " is removed from queue L3" << endl;
+        } else {
+            cout << "Tick " << kernel->stats->totalTicks << ": Thread " << result->getID()
+                 << " is removed from queue L3" << endl;
+        }
+
         return result;
     } else {
         return NULL;
@@ -295,6 +337,7 @@ Thread*
 Scheduler::findNextL1() {
     int min_burst = 0x7fffffff;
     Thread* result = NULL;
+
     for (ListIterator<Thread*> it(L[1]); !it.IsDone(); it.Next()) {
         // operation on it->Item()
         if (it.Item()->getExecutionTime() < min_burst) {
@@ -302,6 +345,7 @@ Scheduler::findNextL1() {
             result = it.Item();
         }
     }
+
     return result;
 }
 
@@ -309,6 +353,7 @@ Thread*
 Scheduler::findNextL2() {
     int max_priority = -1;
     Thread* result = NULL;
+
     for (ListIterator<Thread*> it(L[2]); !it.IsDone(); it.Next()) {
         // operation on it->Item()
         if (it.Item()->getPriority() > max_priority) {
@@ -316,6 +361,7 @@ Scheduler::findNextL2() {
             result = it.Item();
         }
     }
+
     return result;
 }
 

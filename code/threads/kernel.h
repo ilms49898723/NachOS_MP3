@@ -73,6 +73,9 @@ public:
 
     int hostName;               // machine identifier
 
+    bool dumpLogToFile;
+    fstream dumpfile;
+
 private:
 
     Thread* t[10];
