@@ -164,11 +164,12 @@ Interrupt::OneTick() {
 
     if (status == SystemMode) {
         kernel->currentThread->incTimeUsed(SystemTick);
+        kernel->scheduler->incTickToThreads(SystemTick);
     } else {
         kernel->currentThread->incTimeUsed(UserTick);
+        kernel->scheduler->incTickToThreads(UserTick);
     }
 
-    kernel->scheduler->incTickToThreads(1);
     int threadQueueModified = kernel->scheduler->maintainQueues();
 
     // check any pending interrupts are now ready to fire
