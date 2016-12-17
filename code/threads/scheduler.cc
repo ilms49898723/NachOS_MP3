@@ -278,7 +278,9 @@ Scheduler::preprocessThreads() {
     //         }
     //     }
     // }
-    kernel->currentThread->calNewExecuteTime();
+    if (kernel->currentThread->getThreadLevel() == 1) {
+        kernel->currentThread->calNewExecuteTime();
+    }
     kernel->currentThread->saveLastTick();
     kernel->currentThread->setTimeUsed(0);
 }

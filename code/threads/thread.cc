@@ -203,11 +203,11 @@ Thread::saveLastTick() {
 int
 Thread::getThreadLevel() const {
     if (this->priority >= 100) {
-        return 3;
+        return 1;
     } else if (this->priority >= 50) {
         return 2;
     } else {
-        return 1;
+        return 3;
     }
 }
 
