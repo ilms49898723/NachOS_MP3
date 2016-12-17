@@ -199,33 +199,21 @@ Scheduler::Print() {
     L[3]->Apply(ThreadPrint);
 }
 
-
-void
-Scheduler::preprocessThreads() {
-    // add tick
-    // add wait tick
-    // calculate execution time
-    for (int i = 1; i <= 3; ++i) {
-        for (ListIterator<Thread*> it(L[i]); !it.IsDone(); it.Next()) {
-            if (it.Item() != kernel->currentThread) {
-                it.Item()->incTickWaited(kernel->currentThread->getTimeUsed());
-            }
-        }
-    }
-    kernel->currentThread->calNewExecuteTime();
-    kernel->currentThread->saveLastTick();
-    kernel->currentThread->setTimeUsed(0);
-
-    // TODO: maintain L1, L2, L3
+int
+Scheduler::maintainQueues() {
     List <Thread*> * temp1;
     List <Thread*> * temp2;
     temp1 = new List <Thread*>();
     temp2 = new List <Thread*>();
 
+    bool L2_new = FALSE;
+    bool L1_new = FALSE;
+
     for (ListIterator<Thread*> it(L[3]); !it.IsDone(); it.Next()) {
         if (it.Item()-> getPriority() >= 50) {
             L[2]->Append(it.Item());
             temp1->Append(it.Item());
+            L2_new = TRUE;
         }
     }
     for (ListIterator<Thread*> it(temp1); !it.IsDone(); it.Next()) {
@@ -235,11 +223,44 @@ Scheduler::preprocessThreads() {
         if (it.Item()-> getPriority() >= 100) {
             L[1]->Append(it.Item());
             temp2->Append(it.Item());
+            L1_new = TRUE;
         }
     }
     for (ListIterator<Thread*> it(temp2); !it.IsDone(); it.Next()) {
         L[2]->Remove(it.Item());
     }
+    if (L1_new) {
+        return 1;
+    } else if (L2_new) {
+        return 2;
+    } else {
+        return 0;
+    }
+}
+
+void
+Scheduler::incTickToThreads(int amount) {
+    for (int i = 1; i <= 3; ++i) {
+        for (ListIterator<Thread*> it(L[i]); !it.IsDone(); it.Next()) {
+            if (it.Item() != kernel->currentThread) {
+                it.Item()->incTickWaited(1);
+            }
+        }
+    }
+}
+
+void
+Scheduler::preprocessThreads() {
+    // for (int i = 1; i <= 3; ++i) {
+    //     for (ListIterator<Thread*> it(L[i]); !it.IsDone(); it.Next()) {
+    //         if (it.Item() != kernel->currentThread) {
+    //             it.Item()->incTickWaited(kernel->currentThread->getTimeUsed());
+    //         }
+    //     }
+    // }
+    kernel->currentThread->calNewExecuteTime();
+    kernel->currentThread->saveLastTick();
+    kernel->currentThread->setTimeUsed(0);
 }
 
 Thread*

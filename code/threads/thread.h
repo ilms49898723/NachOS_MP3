@@ -108,6 +108,7 @@ public:
     void saveLastTick();
     void calNewExecuteTime();
 
+    int getThreadLevel() const;
     int getPriority() const;
     int getExecutionTime() const;
     int getTimeUsed() const;

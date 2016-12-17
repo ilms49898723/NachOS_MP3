@@ -168,6 +168,9 @@ Interrupt::OneTick() {
         kernel->currentThread->incTimeUsed(UserTick);
     }
 
+    kernel->scheduler->incTickToThreads(1);
+    int threadQueueModified = kernel->scheduler->maintainQueues();
+
     // check any pending interrupts are now ready to fire
     ChangeLevel(IntOn, IntOff); // first, turn off interrupts
     // (interrupt handlers run with
@@ -175,7 +178,18 @@ Interrupt::OneTick() {
     CheckIfDue(FALSE);      // check for pending interrupts
     ChangeLevel(IntOff, IntOn); // re-enable interrupts
 
-    if (yieldOnReturn && kernel->currentThread->getPriority() >= 100) {
+    if (threadQueueModified == 1) {
+        // L1 queue have been modified.
+        // context switch
+        yieldOnReturn = FALSE;
+        status = SystemMode;
+        kernel->currentThread->Yield();
+        status = oldStatus;
+    } else if (yieldOnReturn && kernel->currentThread->getPriority() >= 100) {
+        // L1 no timing slice
+        yieldOnReturn = FALSE;
+    } else if (yieldOnReturn && kernel->currentThread->getPriority() >= 50) {
+        // L2 no timing slice
         yieldOnReturn = FALSE;
     } else if (yieldOnReturn) {
         // if the timer device handler asked

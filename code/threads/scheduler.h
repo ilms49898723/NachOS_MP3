@@ -32,6 +32,8 @@ public:
     // running needs to be deleted
     void Print();       // Print contents of ready list
 
+    int maintainQueues();
+    void incTickToThreads(int amount = 1);
     void preprocessThreads();
     Thread* findNext();
     Thread* findNextL1();
