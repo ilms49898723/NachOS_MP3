@@ -40,6 +40,8 @@ public:
     Thread* findNextL2();
     Thread* findNextL3();
 
+    bool getDirty() const;
+    void setDirty(bool dirty);
 
     // SelfTest for scheduler is implemented in class Thread
 
@@ -50,6 +52,8 @@ private:
                             // L1, L2, L3 for 100~149, 50~99, 0~49
     Thread* toBeDestroyed;  // finishing thread to be destroyed
     // by the next thread that runs
+
+    bool dirty;
 };
 
 #endif // SCHEDULER_H

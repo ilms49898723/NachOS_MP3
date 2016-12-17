@@ -35,6 +35,7 @@ Scheduler::Scheduler() {
         L[i] = new List<Thread*>();
     }
     toBeDestroyed = NULL;
+    dirty = FALSE;
 }
 
 //----------------------------------------------------------------------
@@ -325,4 +326,14 @@ Scheduler::findNextL3() {
     } else {
         return L[3]->Front();
     }
+}
+
+bool
+Scheduler::getDirty() const {
+    return this->dirty;
+}
+
+void
+Scheduler::setDirty(bool dirty) {
+    this->dirty = dirty;
 }

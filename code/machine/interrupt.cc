@@ -179,7 +179,13 @@ Interrupt::OneTick() {
     CheckIfDue(FALSE);      // check for pending interrupts
     ChangeLevel(IntOff, IntOn); // re-enable interrupts
 
-    if (threadQueueModified == 1) {
+    if (kernel->scheduler->getDirty()) {
+        kernel->scheduler->setDirty(FALSE);
+        yieldOnReturn = FALSE;
+        status = SystemMode;
+        kernel->currentThread->Yield();
+        status = oldStatus;
+    } else if (threadQueueModified == 1) {
         // L1 queue have been modified.
         // context switch
         yieldOnReturn = FALSE;

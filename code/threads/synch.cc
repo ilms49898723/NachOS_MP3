@@ -106,6 +106,7 @@ Semaphore::V() {
 
     if (!queue->IsEmpty()) {  // make thread ready.
         kernel->scheduler->ReadyToRun(queue->RemoveFront());
+        kernel->scheduler->setDirty(TRUE);
     }
 
     value++;
