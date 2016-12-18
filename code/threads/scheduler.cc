@@ -227,6 +227,19 @@ Scheduler::maintainQueues() {
 
     for (ListIterator<Thread*> it(L[3]); !it.IsDone(); it.Next()) {
         if (it.Item()-> getPriority() >= 50) {
+
+            if (kernel->dumpLogToFile) {
+                kernel->dumpfile << "Tick " << kernel->stats->totalTicks << ": Thread " << it.Item()->getID()
+                                 << " is removed from queue L3" << endl;
+                kernel->dumpfile << "Tick " << kernel->stats->totalTicks << ": Thread " << it.Item()->getID()
+                                 << " is inserting into queue L" << 3 - it.Item()->getPriority() / 50 << endl;
+            } else {
+                cout << "Tick " << kernel->stats->totalTicks << ": Thread " << it.Item()->getID()
+                     << " is removed from queue L3" << endl;
+                cout << "Tick " << kernel->stats->totalTicks << ": Thread " << it.Item()->getID()
+                     << " is inserting into queue L" << 3 - it.Item()->getPriority() / 50 << endl;
+            }
+
             L[2]->Append(it.Item());
             temp1->Append(it.Item());
             L2_new = TRUE;
@@ -239,6 +252,19 @@ Scheduler::maintainQueues() {
 
     for (ListIterator<Thread*> it(L[2]); !it.IsDone(); it.Next()) {
         if (it.Item()-> getPriority() >= 100) {
+
+            if (kernel->dumpLogToFile) {
+                kernel->dumpfile << "Tick " << kernel->stats->totalTicks << ": Thread " << it.Item()->getID()
+                                 << " is removed from queue L2" << endl;
+                kernel->dumpfile << "Tick " << kernel->stats->totalTicks << ": Thread " << it.Item()->getID()
+                                 << " is inserting into queue L" << 3 - it.Item()->getPriority() / 50 << endl;
+            } else {
+                cout << "Tick " << kernel->stats->totalTicks << ": Thread " << it.Item()->getID()
+                     << " is removed from queue L2" << endl;
+                cout << "Tick " << kernel->stats->totalTicks << ": Thread " << it.Item()->getID()
+                     << " is inserting into queue L" << 3 - it.Item()->getPriority() / 50 << endl;
+            }
+
             L[1]->Append(it.Item());
             temp2->Append(it.Item());
             L1_new = TRUE;
@@ -278,9 +304,7 @@ Scheduler::preprocessThreads() {
     //         }
     //     }
     // }
-    if (kernel->currentThread->getThreadLevel() == 1) {
-        kernel->currentThread->calNewExecuteTime();
-    }
+    kernel->currentThread->calNewExecuteTime();
     kernel->currentThread->saveLastTick();
     kernel->currentThread->setTimeUsed(0);
 }
