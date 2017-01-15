@@ -1,0 +1,130 @@
+Tick 0: Thread -1 is inserting into queue L1
+Tick 10: Thread 1 is inserting into queue L1
+Tick 20: Thread 2 is inserting into queue L1
+Tick 30: Thread -1 is removed from queue L1
+Tick 30: Thread -1 is now selected for execution
+Tick 30: Thread 0 is replaced, and it has executed 30
+Tick 40: Thread 1 is removed from queue L1
+Tick 40: Thread 1 is now selected for execution
+Tick 40: Thread -1 is replaced, and it has executed 10
+Tick 1481: Thread 2 is removed from queue L1
+Tick 1481: Thread 2 is now selected for execution
+Tick 1481: Thread 1 is replaced, and it has executed 1441
+Tick 1581: Thread 1 is inserting into queue L1
+Tick 1581: Thread 1 is removed from queue L1
+Tick 1581: Thread 2 is inserting into queue L1
+Tick 1581: Thread 1 is now selected for execution
+Tick 1581: Thread 2 is replaced, and it has executed 100
+Tick 1611: Thread 2 is removed from queue L1
+Tick 1611: Thread 2 is now selected for execution
+Tick 1611: Thread 1 is replaced, and it has executed 30
+Tick 1711: Thread 1 is inserting into queue L1
+Tick 1711: Thread 1 is removed from queue L1
+Tick 1711: Thread 2 is inserting into queue L1
+Tick 1711: Thread 1 is now selected for execution
+Tick 1711: Thread 2 is replaced, and it has executed 100
+Tick 1801: Thread 2 changes its priority from 130 to 140
+Tick 3301: Thread 2 changes its priority from 140 to 149
+Tick 4801: Thread 2 changes its priority from 149 to 149
+Tick 6301: Thread 2 changes its priority from 149 to 149
+Tick 7801: Thread 2 changes its priority from 149 to 149
+Tick 9301: Thread 2 changes its priority from 149 to 149
+Tick 10801: Thread 2 changes its priority from 149 to 149
+Tick 12301: Thread 2 changes its priority from 149 to 149
+Tick 13801: Thread 2 changes its priority from 149 to 149
+Tick 15301: Thread 2 changes its priority from 149 to 149
+Tick 16801: Thread 2 changes its priority from 149 to 149
+Tick 18301: Thread 2 changes its priority from 149 to 149
+Tick 19801: Thread 2 changes its priority from 149 to 149
+Tick 21301: Thread 2 changes its priority from 149 to 149
+Tick 22801: Thread 2 changes its priority from 149 to 149
+Tick 24301: Thread 2 changes its priority from 149 to 149
+Tick 25801: Thread 2 changes its priority from 149 to 149
+Tick 27301: Thread 2 changes its priority from 149 to 149
+Tick 28801: Thread 2 changes its priority from 149 to 149
+Tick 30301: Thread 2 changes its priority from 149 to 149
+Tick 31801: Thread 2 changes its priority from 149 to 149
+Tick 33301: Thread 2 changes its priority from 149 to 149
+Tick 34801: Thread 2 changes its priority from 149 to 149
+Tick 36301: Thread 2 changes its priority from 149 to 149
+Tick 37801: Thread 2 changes its priority from 149 to 149
+Tick 39301: Thread 2 changes its priority from 149 to 149
+Tick 40801: Thread 2 changes its priority from 149 to 149
+Tick 42301: Thread 2 changes its priority from 149 to 149
+Tick 43801: Thread 2 changes its priority from 149 to 149
+Tick 45301: Thread 2 changes its priority from 149 to 149
+Tick 46801: Thread 2 changes its priority from 149 to 149
+Tick 48301: Thread 2 changes its priority from 149 to 149
+Tick 49801: Thread 2 changes its priority from 149 to 149
+Tick 51301: Thread 2 changes its priority from 149 to 149
+Tick 52801: Thread 2 changes its priority from 149 to 149
+Tick 54301: Thread 2 changes its priority from 149 to 149
+Tick 55801: Thread 2 changes its priority from 149 to 149
+Tick 57301: Thread 2 changes its priority from 149 to 149
+Tick 58801: Thread 2 changes its priority from 149 to 149
+Tick 60301: Thread 2 changes its priority from 149 to 149
+Tick 61801: Thread 2 changes its priority from 149 to 149
+Tick 63301: Thread 2 changes its priority from 149 to 149
+Tick 64801: Thread 2 changes its priority from 149 to 149
+Tick 66301: Thread 2 changes its priority from 149 to 149
+Tick 67801: Thread 2 changes its priority from 149 to 149
+Tick 69301: Thread 2 changes its priority from 149 to 149
+Tick 70801: Thread 2 changes its priority from 149 to 149
+Tick 72301: Thread 2 changes its priority from 149 to 149
+Tick 73801: Thread 2 changes its priority from 149 to 149
+Tick 75301: Thread 2 changes its priority from 149 to 149
+Tick 76801: Thread 2 changes its priority from 149 to 149
+Tick 78301: Thread 2 changes its priority from 149 to 149
+Tick 79801: Thread 2 changes its priority from 149 to 149
+Tick 81301: Thread 2 changes its priority from 149 to 149
+Tick 82801: Thread 2 changes its priority from 149 to 149
+Tick 84301: Thread 2 changes its priority from 149 to 149
+Tick 85801: Thread 2 changes its priority from 149 to 149
+Tick 87301: Thread 2 changes its priority from 149 to 149
+Tick 88801: Thread 2 changes its priority from 149 to 149
+Tick 90301: Thread 2 changes its priority from 149 to 149
+Tick 91801: Thread 2 changes its priority from 149 to 149
+Tick 93301: Thread 2 changes its priority from 149 to 149
+Tick 94801: Thread 2 changes its priority from 149 to 149
+Tick 96301: Thread 2 changes its priority from 149 to 149
+Tick 97801: Thread 2 changes its priority from 149 to 149
+Tick 99301: Thread 2 changes its priority from 149 to 149
+Tick 100801: Thread 2 changes its priority from 149 to 149
+Tick 102301: Thread 2 changes its priority from 149 to 149
+Tick 103801: Thread 2 changes its priority from 149 to 149
+Tick 105301: Thread 2 changes its priority from 149 to 149
+Tick 106801: Thread 2 changes its priority from 149 to 149
+Tick 108301: Thread 2 changes its priority from 149 to 149
+Tick 109801: Thread 2 changes its priority from 149 to 149
+Tick 111301: Thread 2 changes its priority from 149 to 149
+Tick 112801: Thread 2 changes its priority from 149 to 149
+Tick 114301: Thread 2 changes its priority from 149 to 149
+Tick 115801: Thread 2 changes its priority from 149 to 149
+Tick 117301: Thread 2 changes its priority from 149 to 149
+Tick 118801: Thread 2 changes its priority from 149 to 149
+Tick 120301: Thread 2 changes its priority from 149 to 149
+Tick 121801: Thread 2 changes its priority from 149 to 149
+Tick 123301: Thread 2 changes its priority from 149 to 149
+Tick 124801: Thread 2 changes its priority from 149 to 149
+Tick 126301: Thread 2 changes its priority from 149 to 149
+Tick 127801: Thread 2 changes its priority from 149 to 149
+Tick 129301: Thread 2 changes its priority from 149 to 149
+Tick 130801: Thread 2 changes its priority from 149 to 149
+Tick 132301: Thread 2 changes its priority from 149 to 149
+Tick 133801: Thread 2 changes its priority from 149 to 149
+Tick 135301: Thread 2 changes its priority from 149 to 149
+Tick 136801: Thread 2 changes its priority from 149 to 149
+Tick 138301: Thread 2 changes its priority from 149 to 149
+Tick 139801: Thread 2 changes its priority from 149 to 149
+Tick 141301: Thread 2 changes its priority from 149 to 149
+Tick 141750: Thread 2 is removed from queue L1
+Tick 141750: Thread 2 is now selected for execution
+Tick 141750: Thread 1 is replaced, and it has executed 140039
+Tick 143111: Thread 2 is inserting into queue L1
+Tick 143111: Thread 2 is removed from queue L1
+Tick 143111: Thread 2 is now selected for execution
+Tick 143111: Thread 2 is replaced, and it has executed 1261
+Tick 143251: Thread 2 is inserting into queue L1
+Tick 143251: Thread 2 is removed from queue L1
+Tick 143251: Thread 2 is now selected for execution
+Tick 143251: Thread 2 is replaced, and it has executed 40
